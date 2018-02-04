@@ -19,5 +19,7 @@ namespace Witanra.YouTubeUploader
         public string privacyStatus { get; set; }
         public string playlistTitle { get; set; }
         public string playlistDescription { get; set; }
+
+        public int uploadLimit { get; set; }
     }
 }

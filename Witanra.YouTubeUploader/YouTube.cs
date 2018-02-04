@@ -38,7 +38,8 @@ namespace Witanra.YouTubeUploader
                 videosInsertRequest.ProgressChanged += ProgressChanged;
                 videosInsertRequest.ResponseReceived += ResponseReceived;
                 await videosInsertRequest.UploadAsync();
-                return videosInsertRequest.ResponseBody.Id;
+
+                return videosInsertRequest.ResponseBody?.Id;
             }
         }
 
@@ -106,6 +107,9 @@ namespace Witanra.YouTubeUploader
 
         public static async void AddVideoToPlaylist(string playlistId, string videoId)
         {
+            if (videoId == null || playlistId == null)
+                return;
+
             var youtubeService = await Task<string>.Run(() => GetYouTubeService().Result);  
 
             var newPlaylistItem = new PlaylistItem();

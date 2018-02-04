@@ -16,5 +16,6 @@
   "category": "22",
   "privacyStatus": "private",
   "playlistTitle": "{fileDateCreated_year} Witanra Security",
-  "playlistDescription": "{fileDateCreated_year} Witanra Security  Created by {program_name} {program_version} at {uploaded_date}  Program GUID: {program_guid}. Contact witanra@gmail.com for information related to this playlist. Copyright {fileDateCreated_year} Denis Witanra."
+  "playlistDescription": "{fileDateCreated_year} Witanra Security  Created by {program_name} {program_version} at {uploaded_date}  Program GUID: {program_guid}. Contact witanra@gmail.com for information related to this playlist. Copyright {fileDateCreated_year} Denis Witanra.",
+  "uploadLimit": 50
 }

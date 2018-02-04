@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Witanra.Shared;
 
@@ -33,37 +34,33 @@ namespace Witanra.YouTubeUploader
 
 
                 Console.WriteLine($"Getting Files in {settings.folder}...");
-                var files = new List<string>(Directory.GetFiles(settings.folder, "*.*", SearchOption.AllDirectories));
+                DirectoryInfo dir = new DirectoryInfo(settings.folder);
 
-                Console.WriteLine($"Found {files.Count} Files.");
+                var files = dir.GetFiles("*.*",SearchOption.AllDirectories).OrderByDescending(p => p.CreationTime)
+                    .Where(p => settings.fileTypes.Contains(p.Extension))
+                    .ToList();
 
-                for (int i = files.Count - 1; i >= 0; i--)
-                {
-                    if (!settings.fileTypes.Contains(Path.GetExtension(files[i])))
-                    {
-                        files.RemoveAt(i);
-                    }
-                }
-                Console.WriteLine($"Found {files.Count} Video Files.");
+              
+                Console.WriteLine($"Found {files.Count} Files with matching extentions");
 
                 var fileCache = LoadFileCacheList(settings.cacheFile);
 
                 for (int i = files.Count - 1; i >= 0; i--)
                 {
-                    var fileDetail = FindFileDetail(fileCache, files[i]);
+                    var fileDetail = FindFileDetail(fileCache, files[i].FullName);
 
                     if (fileDetail == null)
                     {
-                        fileDetail = new FileDetail(files[i], GetMD5(files[i]));
+                        fileDetail = new FileDetail(files[i].FullName, GetMD5(files[i].FullName));
                         fileCache.Add(fileDetail);
                     }
                     else
                     {
-                        if (!fileDetail.IsMatch(files[i]))
+                        if (!fileDetail.IsMatch(files[i].FullName))
                         {
                             fileCache.Remove(fileDetail);
 
-                            fileDetail = new FileDetail(files[i], GetMD5(files[i]));                            
+                            fileDetail = new FileDetail(files[i].FullName, GetMD5(files[i].FullName));                            
                             fileCache.Add(fileDetail);
                         }
                     }
@@ -84,11 +81,15 @@ namespace Witanra.YouTubeUploader
 
                 for (int i = 0; i < files.Count; i++)
                 {
+                    if (i > settings.uploadLimit)
+                    {
+                        Console.WriteLine($"Upload limit reached. Stopping. {settings.uploadLimit}");
+                    }
                     try
                     {
                         Console.WriteLine($"Uploading {i + 1} of {files.Count} : {files[i]} ...");
-                        FileInfo fileInfo = new FileInfo(files[i]);
-                        FileDetail fileDetail = FindFileDetail(fileCache, files[i]);
+                        FileInfo fileInfo = new FileInfo(files[i].FullName);
+                        FileDetail fileDetail = FindFileDetail(fileCache, files[i].FullName);
 
                         //Console.WriteLine(ReplaceVariables(settings.title, fileInfo, settings.program_guid, fileDetail.MD5));
                         //Console.WriteLine(ReplaceVariables(settings.description, fileInfo, settings.program_guid, fileDetail.MD5));
@@ -101,7 +102,7 @@ namespace Witanra.YouTubeUploader
                             ReplaceVariables(settings.tags, fileInfo, settings.program_guid, fileDetail.MD5),
                             settings.category,
                             YouTube.PrivacyStatus_Private,
-                            files[i],
+                            files[i].FullName,
                             ProgressChanged,
                             ResponseReceived
                             ).Result
@@ -142,7 +143,9 @@ namespace Witanra.YouTubeUploader
             catch (AggregateException ex)
             {
                 PrintAggregateException(ex);
-            }        
+            }
+
+            Thread.Sleep(10000);
         }
 
         private static void PrintAggregateException(AggregateException ex)
@@ -250,7 +253,8 @@ namespace Witanra.YouTubeUploader
                     break;
 
                 case UploadStatus.Failed:
-                    Console.WriteLine("An error prevented the upload from completing.\n{progress.Exception}");
+                    Console.WriteLine($"An error prevented the upload from completing.\n{progress.Exception}");
+                    Thread.Sleep(10000);
                     break;
             }
         }
