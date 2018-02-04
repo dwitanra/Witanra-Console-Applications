@@ -1,0 +1,20 @@
+﻿{
+  "cacheFile": "cacheFile.json",
+  "program_guid": "8e172c5d-3f1a-40cd-b4a3-c22e483783b3",
+  "folder": "M:\\security",
+  "fileTypes": [
+    ".mp4"
+  ],
+  "title": "Witanra Security {file}",
+  "description": "{file} uploaded by {program_name} {program_version} at {uploaded_date} {uploaded_time} from {computer_name} at {filepath}. File Size: {filesize}. File Date Created: {fileDateCreated}. File Date Modified: {fileDateModified}. Program GUID: {program_guid}. MD5: {MD5}. This is a private file that is not be used by anyone. Contact witanra@gmail.com for information related to this video. Copyright {fileDateCreated_year} Denis Witanra.",
+  "tags": [
+    "{program_name}",
+    "Security",
+    "Witanra",
+    "{program_guid}"
+  ],
+  "category": "22",
+  "privacyStatus": "private",
+  "playlistTitle": "{fileDateCreated_year} Witanra Security",
+  "playlistDescription": "{fileDateCreated_year} Witanra Security  Created by {program_name} {program_version} at {uploaded_date}  Program GUID: {program_guid}. Contact witanra@gmail.com for information related to this playlist. Copyright {fileDateCreated_year} Denis Witanra."
+}
