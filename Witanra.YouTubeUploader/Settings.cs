@@ -8,18 +8,20 @@ namespace Witanra.YouTubeUploader
 {
     class Settings
     {
-        public string cacheFile { get; set; }
-        public Guid program_guid { get; set; }
-        public string folder { get; set; }
-        public List<string> fileTypes { get; set; }
-        public string title { get; set; }
-        public string description { get; set; }
-        public List<string> tags { get; set; }
-        public string category { get; set; }
-        public string privacyStatus { get; set; }
-        public string playlistTitle { get; set; }
-        public string playlistDescription { get; set; }
+        public string CacheFile { get; set; }
+        public Guid Program_Guid { get; set; }
+        public string Directory { get; set; }
+        public List<string> FileTypes { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public List<string> Tags { get; set; }
+        public string Category { get; set; }
+        public string PrivacyStatus { get; set; }
+        public string PlaylistTitle { get; set; }
+        public string PlaylistDescription { get; set; }
 
-        public int uploadLimit { get; set; }
+        public int UploadLimit { get; set; }
+
+        public string LogDirectory { get; set; }
     }
 }

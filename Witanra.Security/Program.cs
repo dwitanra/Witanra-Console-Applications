@@ -1,22 +1,30 @@
 ﻿using System;
 using System.IO;
+//using System.Linq;
+using System.Threading;
 using Witanra.Shared;
 
 namespace Witanra.Security
 {
     class Program
     {
+        private static ConsoleWriter _cw;
+
         static void Main(string[] args)
         {
-            var sw = ConsoleHelper.Start("Application Start");
+            System.AppDomain.CurrentDomain.UnhandledException += UnhandledException;
+
+            _cw = new ConsoleWriter();
+            Console.SetOut(_cw);
 
             var settings = JsonHelper.DeserializeFile<Settings>("settings.json");
+            _cw.LogDirectory = settings.LogDirectory;
 
-            ConsoleHelper.WriteLine($"Found { settings.Folders.Count} Folder in Settings");
+            Console.WriteLine($"Found { settings.Folders.Count} Folder in Settings");
 
             var today = DateTime.Today.ToString(settings.DateFormat);
 
-            foreach (NameDir m in settings.Folders)
+            foreach (var m in settings.Folders)
             {
                 FileHelper.MoveFileByNameAndDate(m.Name, settings.DateFormat, m.Dir, settings.DestinationDir, 30);
 
@@ -26,34 +34,29 @@ namespace Witanra.Security
                     if (dir.Contains(today))
                         break;
 
-                    string[] files = Directory.GetFiles(dir, "*.jpg");
-                    if (files.Length > 0)
-                    {
-                        try { 
-                        var dirName = new DirectoryInfo(dir).Name;
-                        var filename = FileHelper.GetUniqueFilename(Path.Combine(Directory.GetParent(dir).FullName, m.Name + "_" + dirName + ".mp4"));
-                        VideoHelper.MakeVideoFromImages(dir, filename, settings.TempDir);
-
-                        if (new FileInfo(filename).Length > 0)
-                        {
-                            foreach (var f in files)
-                            {
-                                File.Delete(f);
-                            }
-                        }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                    }
+                    var dirName = new DirectoryInfo(dir).Name;
+                    var filename = FileHelper.GetUniqueFilename(Path.Combine(Directory.GetParent(dir).FullName, m.Name + "_" + dirName + ".mp4"));
+                    VideoHelper.MakeVideoFromImages(dir, filename, settings.TempDir, true);
                 }
                 FileHelper.DeleteDirIfEmpty(m.Dir);
             }
 
             FileHelper.DeleteDirIfEmpty(settings.DestinationDir);
 
-            ConsoleHelper.Stop("Application Done", sw, 10000);
+            Console.WriteLine("Application finished, will close in 30 seconds.");
+            Console.WriteLine("");
+
+            _cw.SaveToDisk();
+
+            Thread.Sleep(30000);
+        }
+        static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Console.WriteLine(e.ExceptionObject.ToString());
+
+            _cw.SaveToDisk();
+
+            Environment.Exit(1);
         }
     }
 }

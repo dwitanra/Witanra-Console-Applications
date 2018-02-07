@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Witanra.Shared
 {
@@ -12,12 +8,6 @@ namespace Witanra.Shared
     {
         public static void MoveFileByNameAndDate(string Name, string DateFormat, string SourceFolder, string DestinationFolder, int NumberOfDaysToLookBack)
         {
-            var sw = ConsoleHelper.Start("START Move Files by Name and Date");
-            Console.WriteLine($"Name:{Name}");
-            Console.WriteLine($"DateFormat:{DateFormat}");
-            Console.WriteLine($"SourceFolder:{SourceFolder}");
-            Console.WriteLine($"DestinationFolder:{DestinationFolder}");
-
             Console.WriteLine($"Getting Files from {SourceFolder}");
             string[] files = Directory.GetFiles(SourceFolder, "*.*", SearchOption.AllDirectories);
 
@@ -54,8 +44,19 @@ namespace Witanra.Shared
                 //    break;
                 //}
             }
+        }
 
-            ConsoleHelper.Stop("END Move Files by Name and Date", sw, 0);
+        internal static void DeleteDirSafe(string Dir)
+        {
+
+            try
+            {
+                Directory.Delete(Dir, true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unable to delete Directory {Dir}. Exception: {ex.Message}");
+            }
         }
 
         public static string GetUniqueFilename(string filename)
@@ -111,6 +112,22 @@ namespace Witanra.Shared
             {
 
             }
+        }
+
+        public static string BytesToString(long bytes)
+        {
+            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            int order = 0;
+            double len = bytes;
+            while (len >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                len = len / 1024;
+            }
+
+            // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
+            // show a single decimal place, and no space.
+            return String.Format("{0:0.##} {1} ({2} bytes)", len, sizes[order], bytes);
         }
     }
 }

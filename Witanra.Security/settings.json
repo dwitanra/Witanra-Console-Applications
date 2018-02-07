@@ -1,4 +1,5 @@
 ﻿{
+  "logDirectory": "C:\\temp",
   "tempDir": "M:\\temp",
   "destinationDir": "M:\\security",
   "dateFormat": "yyyyMMdd",

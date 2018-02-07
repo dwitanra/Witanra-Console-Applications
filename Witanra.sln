@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Witanra.YouTubeUploader", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Witanra.Security", "Witanra.Security\Witanra.Security.csproj", "{8C4C4F88-CFBA-4FC2-973F-94D215BC868A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Witanra.DirectoryCleanup", "DirectoryCleanup\Witanra.DirectoryCleanup.csproj", "{CEE347F6-57EC-4F06-813E-851A907E5CA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Witanra.DirectoryCleanup", "Witanra.DirectoryCleanup\Witanra.DirectoryCleanup.csproj", "{CEE347F6-57EC-4F06-813E-851A907E5CA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

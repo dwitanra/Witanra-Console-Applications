@@ -8,5 +8,6 @@ namespace Witanra.Security
         public string DateFormat { get; set; }
         public string DestinationDir { get; set; }
         public List<NameDir> Folders { get; set; }
+        public string LogDirectory { get; set; }
     }
 }

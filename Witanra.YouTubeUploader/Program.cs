@@ -12,12 +12,17 @@ namespace Witanra.YouTubeUploader
 {
     class Program
     {
+        private static ConsoleWriter _cw;
+
         static void Main(string[] args)
         {
-            Console.WriteLine($"{System.AppDomain.CurrentDomain.FriendlyName} {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()}");
-            Console.WriteLine("==============================");
+            System.AppDomain.CurrentDomain.UnhandledException += UnhandledException;
+
+            _cw = new ConsoleWriter();
+            Console.SetOut(_cw);
 
             var settings = JsonHelper.DeserializeFile<Settings>("settings.json");
+            _cw.LogDirectory = settings.LogDirectory;
 
             try
             {
@@ -33,17 +38,17 @@ namespace Witanra.YouTubeUploader
                 var YouTubePlaylist = YouTube.GetPlaylistsAsync("snippet").Result;
 
 
-                Console.WriteLine($"Getting Files in {settings.folder}...");
-                DirectoryInfo dir = new DirectoryInfo(settings.folder);
+                Console.WriteLine($"Getting Files in {settings.Directory}...");
+                DirectoryInfo dir = new DirectoryInfo(settings.Directory);
 
                 var files = dir.GetFiles("*.*",SearchOption.AllDirectories).OrderByDescending(p => p.CreationTime)
-                    .Where(p => settings.fileTypes.Contains(p.Extension))
+                    .Where(p => settings.FileTypes.Contains(p.Extension))
                     .ToList();
 
               
-                Console.WriteLine($"Found {files.Count} Files with matching extentions");
+                Console.WriteLine($"Found {files.Count} Files with matching extensions");
 
-                var fileCache = LoadFileCacheList(settings.cacheFile);
+                var fileCache = LoadFileCacheList(settings.CacheFile);
 
                 for (int i = files.Count - 1; i >= 0; i--)
                 {
@@ -75,15 +80,15 @@ namespace Witanra.YouTubeUploader
                     }
                 }
 
-                SaveFileCacheList(fileCache, settings.cacheFile);
+                SaveFileCacheList(fileCache, settings.CacheFile);
 
                 Console.WriteLine($"Found {files.Count} Video Files that need to be uploaded.");
 
                 for (int i = 0; i < files.Count; i++)
                 {
-                    if (i > settings.uploadLimit)
+                    if (i > settings.UploadLimit)
                     {
-                        Console.WriteLine($"Upload limit reached. Stopping. {settings.uploadLimit}");
+                        Console.WriteLine($"Upload limit reached. Stopping. {settings.UploadLimit}");
                     }
                     try
                     {
@@ -97,10 +102,10 @@ namespace Witanra.YouTubeUploader
                         //    Console.WriteLine(ReplaceVariables(s, fileInfo, settings.program_guid, fileDetail.MD5));
 
                         Task<string> t = Task<string>.Run(() => YouTube.AddVideoAsync(
-                            ReplaceVariables(settings.title, fileInfo, settings.program_guid, fileDetail.MD5),
-                            ReplaceVariables(settings.description, fileInfo, settings.program_guid, fileDetail.MD5),
-                            ReplaceVariables(settings.tags, fileInfo, settings.program_guid, fileDetail.MD5),
-                            settings.category,
+                            ReplaceVariables(settings.Title, fileInfo, settings.Program_Guid, fileDetail.MD5),
+                            ReplaceVariables(settings.Description, fileInfo, settings.Program_Guid, fileDetail.MD5),
+                            ReplaceVariables(settings.Tags, fileInfo, settings.Program_Guid, fileDetail.MD5),
+                            settings.Category,
                             YouTube.PrivacyStatus_Private,
                             files[i].FullName,
                             ProgressChanged,
@@ -112,7 +117,7 @@ namespace Witanra.YouTubeUploader
 
 
                         var playlistId = String.Empty;
-                        var playlistTitle = ReplaceVariables(settings.playlistTitle, fileInfo, settings.program_guid, fileDetail.MD5);
+                        var playlistTitle = ReplaceVariables(settings.PlaylistTitle, fileInfo, settings.Program_Guid, fileDetail.MD5);
                         Console.WriteLine($"Finding playlist {playlistTitle}...");
 
                         foreach (var playlist in YouTubePlaylist)
@@ -126,7 +131,7 @@ namespace Witanra.YouTubeUploader
 
                         if (playlistId == String.Empty)
                         {
-                            playlistId = YouTube.AddPlaylistAsync(playlistTitle, ReplaceVariables(settings.playlistDescription, fileInfo, settings.program_guid, fileDetail.MD5), settings.privacyStatus).Result;
+                            playlistId = YouTube.AddPlaylistAsync(playlistTitle, ReplaceVariables(settings.PlaylistDescription, fileInfo, settings.Program_Guid, fileDetail.MD5), settings.PrivacyStatus).Result;
                             YouTubePlaylist = YouTube.GetPlaylistsAsync("snippet").Result;
                         }
 
@@ -205,7 +210,7 @@ namespace Witanra.YouTubeUploader
             }
             catch
             {
-                Console.WriteLine("CacheList not valid, Regnerating...");
+                Console.WriteLine("CacheList not valid, Regenerating...");
                 result = new List<FileDetail>();
             }
 
@@ -263,6 +268,15 @@ namespace Witanra.YouTubeUploader
         {
             Console.WriteLine($"Video id '{video.Id}' was successfully uploaded.");
 
+        }
+
+        static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Console.WriteLine(e.ExceptionObject.ToString());
+
+            _cw.SaveToDisk();
+
+            Environment.Exit(1);
         }
     }
 }

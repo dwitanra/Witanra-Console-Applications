@@ -1,0 +1,17 @@
+﻿{
+  "logDirectory": "C:\\temp",
+  "directories":[
+    {
+      "directory": "C:\\temp",
+      "targetDirSize": 8279059,
+      "minDaysOld": 30,
+      "doDelete": false
+    },
+    {
+      "directory": "C:\\temp",
+      "targetDirSize": 8279059,
+      "minDaysOld": 30,
+      "doDelete": false
+    }
+  ]
+}
