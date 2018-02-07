@@ -1,37 +1,37 @@
 ﻿{
   "logDirectory": "C:\\temp",
-  "tempDir": "M:\\temp",
-  "destinationDir": "M:\\security",
+  "tempDirectory": "M:\\temp",
+  "destinationDirectory": "M:\\security",
   "dateFormat": "yyyyMMdd",
 
   "folders": [
     {
       "Name": "Upstairs",
-      "Dir": "M:\\ftp\\21"
+      "Directory": "M:\\ftp\\21"
     },
     {
       "Name": "Garage",
-      "Dir": "M:\\ftp\\24"
+      "Directory": "M:\\ftp\\24"
     },
     {
       "Name": "Melanie",
-      "Dir": "M:\\ftp\\C1_00626E6BC10B"
+      "Directory": "M:\\ftp\\C1_00626E6BC10B"
     },
     {
       "Name": "Sunroom",
-      "Dir": "M:\\ftp\\C1_00626E589E6C"
+      "Directory": "M:\\ftp\\C1_00626E589E6C"
     },
     {
       "Name": "Madeline",
-      "Dir": "M:\\ftp\\C1_00626E691FE1"
+      "Directory": "M:\\ftp\\C1_00626E691FE1"
     },
     {
       "Name": "Living_Room",
-      "Dir": "M:\\ftp\\C1_C4D6553FD741"
+      "Directory": "M:\\ftp\\C1_C4D6553FD741"
     },
     {
       "Name": "Garage",
-      "Dir": "M:\\ftp\\C1_C4D65540C80A"
+      "Directory": "M:\\ftp\\C1_C4D65540C80A"
     }
   ]
 }

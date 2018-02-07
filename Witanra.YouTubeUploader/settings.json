@@ -1,7 +1,7 @@
 ﻿{
   "cacheFile": "cacheFile.json",
   "program_guid": "8e172c5d-3f1a-40cd-b4a3-c22e483783b3",
-  "folder": "M:\\security",
+  "directory": "M:\\security",
   "fileTypes": [
     ".mp4"
   ],

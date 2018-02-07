@@ -20,48 +20,49 @@ namespace Witanra.Security
             var settings = JsonHelper.DeserializeFile<Settings>("settings.json");
             _cw.LogDirectory = settings.LogDirectory;
 
-            Console.WriteLine($"Found { settings.Folders.Count} Folder in Settings");
+            Console.WriteLine($"Found { settings.Directories.Count} Directory in Settings");
 
             var today = DateTime.Today.ToString(settings.DateFormat);
 
-            foreach (var folder in settings.Folders)
+            foreach (var directory in settings.Directories)
             {
                 try
                 {
-                    FileHelper.MoveFileByNameAndDate(folder.Name, settings.DateFormat, folder.Dir, settings.DestinationDir, 30);
+                    FileHelper.MoveFileByNameAndDate(directory.Name, settings.DateFormat, directory.Dir, settings.DestinationDirectory, 30);
 
-                    var Dirs = Directory.GetDirectories(Path.Combine(settings.DestinationDir, folder.Name));
+                    var Dirs = Directory.GetDirectories(Path.Combine(settings.DestinationDirectory, directory.Name));
                     foreach (var dir in Dirs)
                     {
                         if (dir.Contains(today))
                             break;
 
                         var dirName = new DirectoryInfo(dir).Name;
-                        var filename = FileHelper.GetUniqueFilename(Path.Combine(Directory.GetParent(dir).FullName, folder.Name + "_" + dirName + ".mp4"));
-                        VideoHelper.MakeVideoFromImages(dir, filename, settings.TempDir, true);
+                        var filename = FileHelper.GetUniqueFilename(Path.Combine(Directory.GetParent(dir).FullName, directory.Name + "_" + dirName + ".mp4"));
+                        VideoHelper.MakeVideoFromImages(dir, filename, settings.TempDirectory, true);
                     }
-                    FileHelper.DeleteDirIfEmpty(folder.Dir);
+                    FileHelper.DeleteDirIfEmpty(directory.Dir);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"folder was not processes successfully. Exception: {ex.Message}");
+                    Console.WriteLine($"Directory was not processes successfully. Exception: {ex.Message}");
                 }
             }
 
-            FileHelper.DeleteDirIfEmpty(settings.DestinationDir);
+            FileHelper.DeleteDirIfEmpty(settings.DestinationDirectory);
 
             Console.WriteLine("Application finished, will close in 30 seconds.");
             Console.WriteLine("");
-
             _cw.SaveToDisk();
-
             Thread.Sleep(30000);
         }
         static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Console.WriteLine(e.ExceptionObject.ToString());
 
+            Console.WriteLine("Application finished, will close in 30 seconds.");
+            Console.WriteLine("");
             _cw.SaveToDisk();
+            Thread.Sleep(30000);
 
             Environment.Exit(1);
         }

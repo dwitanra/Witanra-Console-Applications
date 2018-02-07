@@ -6,10 +6,10 @@ namespace Witanra.Shared
 {
     public class FileHelper
     {
-        public static void MoveFileByNameAndDate(string Name, string DateFormat, string SourceFolder, string DestinationFolder, int NumberOfDaysToLookBack)
+        public static void MoveFileByNameAndDate(string Name, string DateFormat, string SourceDirectory, string DestinationDirectory, int NumberOfDaysToLookBack)
         {
-            Console.WriteLine($"Getting Files from {SourceFolder}...");
-            string[] files = Directory.GetFiles(SourceFolder, "*.*", SearchOption.AllDirectories);
+            Console.WriteLine($"Getting Files from {SourceDirectory}...");
+            string[] files = Directory.GetFiles(SourceDirectory, "*.*", SearchOption.AllDirectories);
 
             for (int i = 0; i <= NumberOfDaysToLookBack; i++)
             {
@@ -24,7 +24,7 @@ namespace Witanra.Shared
                         //Console.WriteLine($"Moving {filename}");
                         try
                         {
-                            var newFileName = Path.Combine(DestinationFolder, Name, Date, filename);
+                            var newFileName = Path.Combine(DestinationDirectory, Name, Date, filename);
                             (new FileInfo(newFileName)).Directory.Create();
                             if (File.Exists(newFileName))
                             {

@@ -97,9 +97,7 @@ namespace Witanra.DirectoryCleanup
 
             Console.WriteLine("Application finished, will close in 30 seconds.");
             Console.WriteLine("");
-
             _cw.SaveToDisk();
-
             Thread.Sleep(30000);
         }  
 
@@ -107,7 +105,10 @@ namespace Witanra.DirectoryCleanup
         {
             Console.WriteLine(e.ExceptionObject.ToString());
 
+            Console.WriteLine("Application finished, will close in 30 seconds.");
+            Console.WriteLine("");
             _cw.SaveToDisk();
+            Thread.Sleep(30000);
 
             Environment.Exit(1);
         }       
