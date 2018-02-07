@@ -24,21 +24,28 @@ namespace Witanra.Security
 
             var today = DateTime.Today.ToString(settings.DateFormat);
 
-            foreach (var m in settings.Folders)
+            foreach (var folder in settings.Folders)
             {
-                FileHelper.MoveFileByNameAndDate(m.Name, settings.DateFormat, m.Dir, settings.DestinationDir, 30);
-
-                var Dirs = Directory.GetDirectories(Path.Combine(settings.DestinationDir, m.Name));
-                foreach (var dir in Dirs)
+                try
                 {
-                    if (dir.Contains(today))
-                        break;
+                    FileHelper.MoveFileByNameAndDate(folder.Name, settings.DateFormat, folder.Dir, settings.DestinationDir, 30);
 
-                    var dirName = new DirectoryInfo(dir).Name;
-                    var filename = FileHelper.GetUniqueFilename(Path.Combine(Directory.GetParent(dir).FullName, m.Name + "_" + dirName + ".mp4"));
-                    VideoHelper.MakeVideoFromImages(dir, filename, settings.TempDir, true);
+                    var Dirs = Directory.GetDirectories(Path.Combine(settings.DestinationDir, folder.Name));
+                    foreach (var dir in Dirs)
+                    {
+                        if (dir.Contains(today))
+                            break;
+
+                        var dirName = new DirectoryInfo(dir).Name;
+                        var filename = FileHelper.GetUniqueFilename(Path.Combine(Directory.GetParent(dir).FullName, folder.Name + "_" + dirName + ".mp4"));
+                        VideoHelper.MakeVideoFromImages(dir, filename, settings.TempDir, true);
+                    }
+                    FileHelper.DeleteDirIfEmpty(folder.Dir);
                 }
-                FileHelper.DeleteDirIfEmpty(m.Dir);
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"folder was not processes successfully. Exception: {ex.Message}");
+                }
             }
 
             FileHelper.DeleteDirIfEmpty(settings.DestinationDir);

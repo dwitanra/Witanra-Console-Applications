@@ -8,7 +8,7 @@ namespace Witanra.Shared
     {
         public static void MoveFileByNameAndDate(string Name, string DateFormat, string SourceFolder, string DestinationFolder, int NumberOfDaysToLookBack)
         {
-            Console.WriteLine($"Getting Files from {SourceFolder}");
+            Console.WriteLine($"Getting Files from {SourceFolder}...");
             string[] files = Directory.GetFiles(SourceFolder, "*.*", SearchOption.AllDirectories);
 
             for (int i = 0; i <= NumberOfDaysToLookBack; i++)
@@ -46,16 +46,16 @@ namespace Witanra.Shared
             }
         }
 
-        internal static void DeleteDirSafe(string Dir)
+        public static void DeleteDirSafe(string directory)
         {
-
             try
             {
-                Directory.Delete(Dir, true);
+                Console.WriteLine($"Deleting {directory} since it was empty.");
+                Directory.Delete(directory, true);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Unable to delete Directory {Dir}. Exception: {ex.Message}");
+                Console.WriteLine($"Unable to delete Directory {directory}. Exception: {ex.Message}");
             }
         }
 
@@ -66,14 +66,19 @@ namespace Witanra.Shared
             string fileNameOnly = Path.GetFileNameWithoutExtension(filename);
             string extension = Path.GetExtension(filename);
             string path = Path.GetDirectoryName(filename);
-            string newFullPath = filename;
+            string newFileName = filename;
 
-            while (File.Exists(newFullPath))
+            while (File.Exists(newFileName))
             {
                 string tempFileName = $"{fileNameOnly}({ count++})";
-                newFullPath = Path.Combine(path, tempFileName + extension);
+                newFileName = Path.Combine(path, tempFileName + extension);
             }
-            return newFullPath;
+            if (filename != newFileName)
+            {
+                Console.WriteLine($"{filename} was already present. Filename is now {newFileName}");
+            }
+
+            return newFileName;
         }
 
         public static void DeleteDirIfEmpty(string startLocation)
@@ -84,6 +89,7 @@ namespace Witanra.Shared
                 if (Directory.GetFiles(directory).Length == 0 &&
                     Directory.GetDirectories(directory).Length == 0)
                 {
+                    Console.WriteLine($"Deleting {directory} since it was empty.");
                     Directory.Delete(directory, false);
                 }
             }
@@ -91,6 +97,7 @@ namespace Witanra.Shared
 
         public static void LaunchCommandLineApp(string dir, string exe, string argument)
         {
+            Console.WriteLine($"Launching {dir} {exe} {argument}...");
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.CreateNoWindow = false;
             startInfo.UseShellExecute = false;
@@ -112,6 +119,8 @@ namespace Witanra.Shared
             {
 
             }
+
+            Console.WriteLine($"Exited {exe}");
         }
 
         public static string BytesToString(long bytes)
