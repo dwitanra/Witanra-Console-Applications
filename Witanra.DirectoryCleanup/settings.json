@@ -1,15 +1,15 @@
 ﻿{
-  "logDirectory": "C:\\temp",
-  "directories":[
+  "logDirectory": "M:\\program\\logs",
+  "directories": [
     {
-      "directory": "C:\\temp",
-      "targetDirSize": 8279059,
+      "directory": "M:\\program\\logs",
+      "targetDirSize": 1073741824,
       "minDaysOld": 30,
       "doDelete": false
     },
     {
-      "directory": "C:\\temp",
-      "targetDirSize": 8279059,
+      "directory": "M:\\security",
+      "targetDirSize": 724775731200,
       "minDaysOld": 30,
       "doDelete": false
     }

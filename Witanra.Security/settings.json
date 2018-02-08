@@ -1,10 +1,10 @@
 ﻿{
-  "logDirectory": "C:\\temp",
+  "logDirectory": "M:\\program\\logs",
   "tempDirectory": "M:\\temp",
   "destinationDirectory": "M:\\security",
   "dateFormat": "yyyyMMdd",
 
-  "folders": [
+  "Directories": [
     {
       "Name": "Upstairs",
       "Directory": "M:\\ftp\\21"

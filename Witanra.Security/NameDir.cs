@@ -9,6 +9,6 @@ namespace Witanra.Security
     class NameDir
     {
         public string Name { get; set; }
-        public string Dir { get; set; }
+        public string Directory { get; set; }
     }
 }

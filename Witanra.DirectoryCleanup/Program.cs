@@ -38,44 +38,51 @@ namespace Witanra.DirectoryCleanup
                 currentDirSize = orginalDirSize;
                 Console.WriteLine($"Found {allFiles.Count()} files. Total size is {FileHelper.BytesToString(orginalDirSize)} .");
 
-                Console.WriteLine($"Finding files older than {dir.MinDaysOld} days...");
-                var files = allFiles
-                    .Where(f => f.CreationTime <= DateTime.Today.AddDays(-1 * dir.MinDaysOld))
-                    .Where(f => f.LastWriteTime <= DateTime.Today.AddDays(-1 * dir.MinDaysOld))
-                    .OrderByDescending(f => f.CreationTime)
-                    .ThenByDescending(f => f.LastWriteTime).ToList();
-                Console.WriteLine($"Found {files.Count()} that are older than {dir.MinDaysOld} days.");
-
-                for (int i = files.Count() - 1; i >= 0; i--)
+                if (currentDirSize <= dir.TargetDirSize)
                 {
-                    if (currentDirSize <= dir.TargetDirSize)
-                    {
-                        Console.WriteLine($"STOPPED SINCE Directory size ({FileHelper.BytesToString(currentDirSize)}) is now less than target size {FileHelper.BytesToString(dir.TargetDirSize)}");
+                    WriteStop(currentDirSize, dir.TargetDirSize);
+                }
+                else
+                {
+                    Console.WriteLine($"Finding files older than {dir.MinDaysOld} days...");
+                    var files = allFiles
+                        .Where(f => f.CreationTime <= DateTime.Today.AddDays(-1 * dir.MinDaysOld))
+                        .Where(f => f.LastWriteTime <= DateTime.Today.AddDays(-1 * dir.MinDaysOld))
+                        .OrderByDescending(f => f.CreationTime)
+                        .ThenByDescending(f => f.LastWriteTime).ToList();
+                    Console.WriteLine($"Found {files.Count()} file{((files.Count != 1) ? "s" : "")} that are older than {dir.MinDaysOld} days.");
 
-                        break;
-                    }
-                    else
+                    for (int i = files.Count() - 1; i >= 0; i--)
                     {
-                        try
+                        if (currentDirSize <= dir.TargetDirSize)
                         {
-                            if (dir.DoDelete)
-                            {
-                                Console.WriteLine($"Deleting {files[i].FullName}");
-                                File.Delete(files[i].FullName);
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Would have Deleted {files[i].FullName}");
-                            }
-                            currentDirSize -= files[i].Length;
-                            filesDeleted++;
-                            bytesDeleted += files[i].Length;
-
-                            files.RemoveAt(i);
+                            WriteStop(currentDirSize, dir.TargetDirSize);
+                            break;
                         }
-                        catch (Exception e)
+                        else
                         {
-                            Console.WriteLine($"Unable to delete {files[i].FullName}. Exception: {e.Message}");
+                            try
+                            {
+                                if (dir.DoDelete)
+                                {
+                                    Console.WriteLine($"Deleting {files[i].FullName}");
+                                    File.Delete(files[i].FullName);
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Would have Deleted {files[i].FullName}");
+                                }
+                                currentDirSize -= files[i].Length;
+                                filesDeleted++;
+                                bytesDeleted += files[i].Length;
+
+                                files.RemoveAt(i);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine($"Unable to delete {files[i].FullName}. Exception: {e.Message}");
+                            }
+
                         }
                     }
                 }
@@ -85,12 +92,12 @@ namespace Witanra.DirectoryCleanup
                 if (dir.DoDelete)
                 {
                     Console.WriteLine($"Current Directory Size: {FileHelper.BytesToString(currentDirSize)}");
-                    Console.WriteLine($"{filesDeleted} files deleted. {FileHelper.BytesToString(bytesDeleted)} deleted.");
+                    Console.WriteLine($"{filesDeleted} file{((filesDeleted != 1) ? "s" : "")} deleted. {FileHelper.BytesToString(bytesDeleted)} deleted.");
                 }
                 else
                 {
                     Console.WriteLine($"Projected Directory Size: {FileHelper.BytesToString(currentDirSize)}");
-                    Console.WriteLine($"{filesDeleted} files would have been deleted. {FileHelper.BytesToString(bytesDeleted)} would have been deleted.");
+                    Console.WriteLine($"{filesDeleted} file{((filesDeleted != 1) ? "s" : "")} would have been deleted. {FileHelper.BytesToString(bytesDeleted)} would have been deleted.");
                 }
                 Console.WriteLine("");
             }
@@ -99,7 +106,12 @@ namespace Witanra.DirectoryCleanup
             Console.WriteLine("");
             _cw.SaveToDisk();
             Thread.Sleep(30000);
-        }  
+        }
+
+        private static void WriteStop(long CurrentDirSize, long TargetDirSize)
+        {
+            Console.WriteLine($"STOPPED SINCE Directory size ({FileHelper.BytesToString(CurrentDirSize)}) is now less than target size {FileHelper.BytesToString(TargetDirSize)}");
+        }
 
         static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
@@ -111,6 +123,6 @@ namespace Witanra.DirectoryCleanup
             Thread.Sleep(30000);
 
             Environment.Exit(1);
-        }       
+        }
     }
 }
