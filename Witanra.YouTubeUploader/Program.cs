@@ -190,8 +190,8 @@ namespace Witanra.YouTubeUploader
             str = str.Replace("{fileDateCreated_month}", file.CreationTime.ToString("MM"));
             str = str.Replace("{fileDateCreated_day}", file.CreationTime.ToString("dd"));
             str = str.Replace("{fileDateModified}", file.LastWriteTime.ToString());
-            str = str.Replace("{fileDateModified__year}", file.LastWriteTime.ToString("yyyy"));
-            str = str.Replace("{fileDateModified__month}", file.LastWriteTime.ToString("MM"));
+            str = str.Replace("{fileDateModified_year}", file.LastWriteTime.ToString("yyyy"));
+            str = str.Replace("{fileDateModified_month}", file.LastWriteTime.ToString("MM"));
             str = str.Replace("{fileDateModified_day}", file.LastWriteTime.ToString("dd"));
             str = str.Replace("{uploaded_date}", DateTime.Now.ToShortDateString());
             str = str.Replace("{uploaded_time}", DateTime.Now.ToShortTimeString());
