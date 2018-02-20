@@ -28,7 +28,7 @@ namespace Witanra.Security
             {
                 try
                 {
-                    FileHelper.MoveFileByNameAndDate(directory.Name, settings.DateFormat, directory.Dir, settings.DestinationDirectory, 30);
+                    FileHelper.MoveFileByNameAndDate(directory.Name, settings.DateFormat, directory.Directory, settings.DestinationDirectory, 30);
 
                     var Dirs = Directory.GetDirectories(Path.Combine(settings.DestinationDirectory, directory.Name));
                     foreach (var dir in Dirs)
@@ -37,10 +37,10 @@ namespace Witanra.Security
                             break;
 
                         var dirName = new DirectoryInfo(dir).Name;
-                        var filename = FileHelper.GetUniqueFilename(Path.Combine(Directory.GetParent(dir).FullName, directory.Name + "_" + dirName + ".mp4"));
+                        var filename = Path.Combine(Directory.GetParent(dir).FullName, directory.Name + "_" + dirName + ".mp4");
                         VideoHelper.MakeVideoFromImages(dir, filename, settings.TempDirectory, true);
                     }
-                    FileHelper.DeleteDirIfEmpty(directory.Dir);
+                    FileHelper.DeleteDirIfEmpty(directory.Directory);
                 }
                 catch (Exception ex)
                 {

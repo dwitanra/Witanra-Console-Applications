@@ -10,6 +10,7 @@ namespace Witanra.Shared
         {
             Console.WriteLine($"Getting Files from {SourceDirectory}...");
             string[] files = Directory.GetFiles(SourceDirectory, "*.*", SearchOption.AllDirectories);
+            Console.WriteLine($"{files.Length + 1} file{((files.Length + 1 != 1) ? "s":"")} found");
 
             for (int i = 0; i <= NumberOfDaysToLookBack; i++)
             {
@@ -21,7 +22,6 @@ namespace Witanra.Shared
                     {
                         //FileForDateFound = true;
                         var filename = Path.GetFileName(file);
-                        //Console.WriteLine($"Moving {filename}");
                         try
                         {
                             var newFileName = Path.Combine(DestinationDirectory, Name, Date, filename);
@@ -30,6 +30,7 @@ namespace Witanra.Shared
                             {
                                 File.Delete(newFileName);
                             }
+                            Console.WriteLine($"Moving {file} to {filename}");
                             File.Move(file, newFileName);
                         }
                         catch (Exception ex)
@@ -50,8 +51,11 @@ namespace Witanra.Shared
         {
             try
             {
-                Console.WriteLine($"Deleting {directory} since it was empty.");
-                Directory.Delete(directory, true);
+                if (Directory.Exists(directory))
+                {
+                    Console.WriteLine($"Deleting {directory} since it was empty.");
+                    Directory.Delete(directory, true);
+                }
             }
             catch (Exception ex)
             {

@@ -46,7 +46,7 @@ namespace Witanra.YouTubeUploader
                     .ToList();
 
               
-                Console.WriteLine($"Found {files.Count} Files with matching extensions");
+                Console.WriteLine($"Found {files.Count} File{((files.Count != 1) ? "s" : "")} with matching extensions");
 
                 var fileCache = LoadFileCacheList(settings.CacheFile);
 
@@ -82,13 +82,14 @@ namespace Witanra.YouTubeUploader
 
                 SaveFileCacheList(fileCache, settings.CacheFile);
 
-                Console.WriteLine($"Found {files.Count} Video Files that need to be uploaded.");
+                Console.WriteLine($"Found {files.Count} Video File{((files.Count != 1) ? "s" : "")} that need to be uploaded.");
 
                 for (int i = 0; i < files.Count; i++)
                 {
-                    if (i > settings.UploadLimit)
+                    if (i >= settings.UploadLimit)
                     {
                         Console.WriteLine($"Upload limit reached. Stopping. {settings.UploadLimit}");
+                        break;
                     }
                     try
                     {
