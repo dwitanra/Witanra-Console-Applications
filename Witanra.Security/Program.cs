@@ -51,20 +51,20 @@ namespace Witanra.Security
 
             FileHelper.DeleteDirIfEmpty(settings.DestinationDirectory);
 
+            CloseWait();
+        }
+
+        static void CloseWait()
+        {
             Console.WriteLine("Application finished, will close in 30 seconds.");
             Console.WriteLine("");
             _cw.SaveToDisk();
             Thread.Sleep(30000);
         }
+
         static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Console.WriteLine(e.ExceptionObject.ToString());
-
-            Console.WriteLine("Application finished, will close in 30 seconds.");
-            Console.WriteLine("");
-            _cw.SaveToDisk();
-            Thread.Sleep(30000);
-
+            CloseWait();
             Environment.Exit(1);
         }
 

@@ -153,10 +153,7 @@ namespace Witanra.YouTubeUploader
                 PrintAggregateException(ex);
             }
 
-            Console.WriteLine("Application finished, will close in 30 seconds.");
-            Console.WriteLine("");
-            _cw.SaveToDisk();
-            Thread.Sleep(30000);
+            CloseWait();
         }
 
         private static void PrintAggregateException(AggregateException ex)
@@ -276,15 +273,17 @@ namespace Witanra.YouTubeUploader
 
         }
 
-        static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        static void CloseWait()
         {
-            Console.WriteLine(e.ExceptionObject.ToString());
-
             Console.WriteLine("Application finished, will close in 30 seconds.");
             Console.WriteLine("");
             _cw.SaveToDisk();
             Thread.Sleep(30000);
+        }
 
+        static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            CloseWait();
             Environment.Exit(1);
         }
 

@@ -103,29 +103,26 @@ namespace Witanra.DirectoryCleanup
                 Console.WriteLine("");
             }
 
-            Console.WriteLine("Application finished, will close in 30 seconds.");
-            Console.WriteLine("");
-            _cw.SaveToDisk();
-            Thread.Sleep(30000);
+            CloseWait();
         }
-
         private static void WriteStop(long CurrentDirSize, long TargetDirSize)
         {
             Console.WriteLine($"STOPPED SINCE Directory size ({FileHelper.BytesToString(CurrentDirSize)}) is now less than target size {FileHelper.BytesToString(TargetDirSize)}");
         }
 
-        static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        static void CloseWait()
         {
-            Console.WriteLine(e.ExceptionObject.ToString());
-
             Console.WriteLine("Application finished, will close in 30 seconds.");
             Console.WriteLine("");
             _cw.SaveToDisk();
             Thread.Sleep(30000);
-
-            Environment.Exit(1);
         }
 
+        static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            CloseWait();
+            Environment.Exit(1);
+        }
         static void OnProcessExit(object sender, EventArgs e)
         {
             _cw.SaveToDisk();
