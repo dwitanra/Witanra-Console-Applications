@@ -16,7 +16,8 @@ namespace Witanra.YouTubeUploader
 
         static void Main(string[] args)
         {
-            System.AppDomain.CurrentDomain.UnhandledException += UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
 
             _cw = new ConsoleWriter();
             Console.SetOut(_cw);
@@ -28,7 +29,7 @@ namespace Witanra.YouTubeUploader
             {
                 Console.WriteLine("Getting Video list...");
                 var YouTubeVideos = YouTube.GetMyUploadsAsync("snippet").Result;
-                Console.WriteLine($"Found {YouTubeVideos.Count} Videos.");
+                Console.WriteLine($"Found {YouTubeVideos.Count} Video{((YouTubeVideos.Count != 1) ? "s" : "")}.");
                 //foreach (var playlistItem in YouTubeVideos)
                 //{
                 //    Console.WriteLine("{0} ({1})", playlistItem.Snippet.Title, playlistItem.Snippet.ResourceId.VideoId);
@@ -36,6 +37,7 @@ namespace Witanra.YouTubeUploader
 
                 Console.WriteLine("Getting Playlist list...");
                 var YouTubePlaylist = YouTube.GetPlaylistsAsync("snippet").Result;
+                Console.WriteLine($"Found {YouTubePlaylist.Count} Playlist{((YouTubePlaylist.Count != 1) ? "s" : "")} for user");
 
 
                 Console.WriteLine($"Getting Files in {settings.Directory}...");
@@ -46,10 +48,11 @@ namespace Witanra.YouTubeUploader
                     .ToList();
 
               
-                Console.WriteLine($"Found {files.Count} File{((files.Count != 1) ? "s" : "")} with matching extensions");
-
+                Console.WriteLine($"Found {files.Count} File{((files.Count != 1) ? "s" : "")} matching these extensions {String.Join(", ", settings.FileTypes.ToArray())}");
+               
                 var fileCache = LoadFileCacheList(settings.CacheFile);
 
+                Console.WriteLine("Figuring out what video files need to be uploaded...");
                 for (int i = files.Count - 1; i >= 0; i--)
                 {
                     var fileDetail = FindFileDetail(fileCache, files[i].FullName);
@@ -63,8 +66,8 @@ namespace Witanra.YouTubeUploader
                     {
                         if (!fileDetail.IsMatch(files[i].FullName))
                         {
+                            Console.WriteLine($"{files[i].FullName} has changed!");
                             fileCache.Remove(fileDetail);
-
                             fileDetail = new FileDetail(files[i].FullName, GetMD5(files[i].FullName));                            
                             fileCache.Add(fileDetail);
                         }
@@ -79,10 +82,9 @@ namespace Witanra.YouTubeUploader
                         }
                     }
                 }
-
-                SaveFileCacheList(fileCache, settings.CacheFile);
-
                 Console.WriteLine($"Found {files.Count} Video File{((files.Count != 1) ? "s" : "")} that need to be uploaded.");
+
+                SaveFileCacheList(fileCache, settings.CacheFile);               
 
                 for (int i = 0; i < files.Count; i++)
                 {
@@ -284,6 +286,11 @@ namespace Witanra.YouTubeUploader
             Thread.Sleep(30000);
 
             Environment.Exit(1);
+        }
+
+        static void OnProcessExit(object sender, EventArgs e)
+        {
+            _cw.SaveToDisk();
         }
     }
 }

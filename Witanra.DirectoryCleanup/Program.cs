@@ -12,7 +12,8 @@ namespace Witanra.DirectoryCleanup
 
         static void Main(string[] args)
         {
-            System.AppDomain.CurrentDomain.UnhandledException += UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
 
             _cw = new ConsoleWriter();
             Console.SetOut(_cw);
@@ -123,6 +124,11 @@ namespace Witanra.DirectoryCleanup
             Thread.Sleep(30000);
 
             Environment.Exit(1);
+        }
+
+        static void OnProcessExit(object sender, EventArgs e)
+        {
+            _cw.SaveToDisk();
         }
     }
 }

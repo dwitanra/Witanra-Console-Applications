@@ -101,13 +101,17 @@ namespace Witanra.Shared
         {
             try
             {
-                if (!Directory.Exists(LogDirectory))
-                    Directory.CreateDirectory(LogDirectory);
+                if (_sb.Length > 0)
+                {
+                    if (!Directory.Exists(LogDirectory))
+                        Directory.CreateDirectory(LogDirectory);
 
-                var f = Path.Combine(LogDirectory, AppDomain.CurrentDomain.FriendlyName + DateTime.Now.ToString(_logFileDateTimeFormat) + ".log");
+                    var f = Path.Combine(LogDirectory, AppDomain.CurrentDomain.FriendlyName + DateTime.Now.ToString(_logFileDateTimeFormat) + ".log");
 
-                Console.WriteLine($"Console Output saved to: {f}");
-                File.WriteAllText(f, _sb.ToString());
+                    Console.WriteLine($"Console Output saved to: {f}");
+                    File.WriteAllText(f, _sb.ToString());
+                    _sb.Clear();
+                }
             }
             catch (Exception ex)
             {
