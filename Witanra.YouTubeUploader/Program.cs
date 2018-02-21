@@ -37,80 +37,95 @@ namespace Witanra.YouTubeUploader
 
                 Console.WriteLine("Getting Playlist list...");
                 var YouTubePlaylist = YouTube.GetPlaylistsAsync("snippet").Result;
-                Console.WriteLine($"Found {YouTubePlaylist.Count} Playlist{((YouTubePlaylist.Count != 1) ? "s" : "")} for user");
+                Console.WriteLine($"Found {YouTubePlaylist.Count} Playlist{((YouTubePlaylist.Count != 1) ? "s" : "")}");
 
 
                 Console.WriteLine($"Getting Files in {settings.Directory}...");
                 DirectoryInfo dir = new DirectoryInfo(settings.Directory);
-
-                var files = dir.GetFiles("*.*",SearchOption.AllDirectories).OrderByDescending(p => p.CreationTime)
+                var filesInDir = dir.GetFiles("*.*", SearchOption.AllDirectories).OrderByDescending(p => p.CreationTime)
                     .Where(p => settings.FileTypes.Contains(p.Extension))
                     .ToList();
+                Console.WriteLine($"Found {filesInDir.Count} File{((filesInDir.Count != 1) ? "s" : "")} matching these extensions: {String.Join(", ", settings.FileTypes.ToArray())}");
 
-              
-                Console.WriteLine($"Found {files.Count} File{((files.Count != 1) ? "s" : "")} matching these extensions {String.Join(", ", settings.FileTypes.ToArray())}");
-               
+                Console.WriteLine($"Loading and Generating File Cache...");
                 var fileCache = LoadFileCacheList(settings.CacheFile);
-
-                Console.WriteLine("Figuring out what video files need to be uploaded...");
-                for (int i = files.Count - 1; i >= 0; i--)
+                foreach (var f in filesInDir)
                 {
-                    var fileDetail = FindFileDetail(fileCache, files[i].FullName);
+                    var fileDetail = FindFileDetail(fileCache, f.FullName);
 
                     if (fileDetail == null)
                     {
-                        fileDetail = new FileDetail(files[i].FullName, GetMD5(files[i].FullName));
+                        Console.WriteLine($"{f.FullName} is new");
+                        fileDetail = new FileDetail(f, GetMD5(f.FullName));
                         fileCache.Add(fileDetail);
                     }
                     else
                     {
-                        if (!fileDetail.IsMatch(files[i].FullName))
+                        if (!fileDetail.IsMatch(f))
                         {
-                            Console.WriteLine($"{files[i].FullName} has changed!");
+                            Console.WriteLine($"{f.FullName} has changed!");
                             fileCache.Remove(fileDetail);
-                            fileDetail = new FileDetail(files[i].FullName, GetMD5(files[i].FullName));                            
+                            fileDetail = new FileDetail(f, GetMD5(f.FullName));
                             fileCache.Add(fileDetail);
                         }
                     }
+                }
+                SaveFileCacheList(fileCache, settings.CacheFile);
+                Console.WriteLine($"File Cache has {fileCache.Count} File{((fileCache.Count != 1) ? "s" : "")}. Saved to {settings.CacheFile}");
 
-                    foreach (var upload in YouTubeVideos)
+                Console.WriteLine("Figuring out what video files need to be uploaded...");
+                var filesToUpload = new List<FileDetail>();
+                foreach (var f in fileCache)
+                {
+                    var doUpload = true;
+                    if (File.Exists(f.Filename))
                     {
-                        if (upload.Snippet.Description.Contains(fileDetail.MD5))
+                        foreach (var upload in YouTubeVideos)
                         {
-                            files.RemoveAt(i);
-                            break;
+                            if (upload.Snippet.Description.Contains(f.MD5))
+                            {
+                                doUpload = false;
+                                break;
+                            }
                         }
                     }
+                    else
+                    {
+                        doUpload = false;
+                    }
+
+                    if (doUpload)
+                    {
+                        filesToUpload.Add(f);
+                    }
                 }
-                Console.WriteLine($"Found {files.Count} Video File{((files.Count != 1) ? "s" : "")} that need to be uploaded.");
+                Console.WriteLine($"Found {filesToUpload.Count} Video File{((filesToUpload.Count != 1) ? "s" : "")} that need to be uploaded.");
 
-                SaveFileCacheList(fileCache, settings.CacheFile);               
 
-                for (int i = 0; i < files.Count; i++)
+                int i = 0;
+                foreach (var f in filesToUpload)
                 {
-                    if (i >= settings.UploadLimit)
+                    i++;
+                    if (i > settings.UploadLimit)
                     {
                         Console.WriteLine($"Upload limit reached. Stopping. {settings.UploadLimit}");
                         break;
                     }
                     try
                     {
-                        Console.WriteLine($"Uploading {i + 1} of {files.Count} : {files[i]} ...");
-                        FileInfo fileInfo = new FileInfo(files[i].FullName);
-                        FileDetail fileDetail = FindFileDetail(fileCache, files[i].FullName);
+                        Console.WriteLine($"Uploading {i} of {filesToUpload.Count} : {f.Filename} ...");
 
-                        //Console.WriteLine(ReplaceVariables(settings.title, fileInfo, settings.program_guid, fileDetail.MD5));
-                        //Console.WriteLine(ReplaceVariables(settings.description, fileInfo, settings.program_guid, fileDetail.MD5));
-                        //foreach (var s in settings.tags)
-                        //    Console.WriteLine(ReplaceVariables(s, fileInfo, settings.program_guid, fileDetail.MD5));
+                        //Console.WriteLine(ReplaceVariables(settings.Title, f, settings.Program_Guid));
+                        //Console.WriteLine(ReplaceVariables(settings.Description, f, settings.Program_Guid));
+                        //Console.WriteLine(ReplaceVariables(settings.Tags, f, settings.Program_Guid));
 
                         Task<string> t = Task<string>.Run(() => YouTube.AddVideoAsync(
-                            ReplaceVariables(settings.Title, fileInfo, settings.Program_Guid, fileDetail.MD5),
-                            ReplaceVariables(settings.Description, fileInfo, settings.Program_Guid, fileDetail.MD5),
-                            ReplaceVariables(settings.Tags, fileInfo, settings.Program_Guid, fileDetail.MD5),
+                            ReplaceVariables(settings.Title, f, settings.Program_Guid),
+                            ReplaceVariables(settings.Description, f, settings.Program_Guid),
+                            ReplaceVariables(settings.Tags, f, settings.Program_Guid),
                             settings.Category,
                             YouTube.PrivacyStatus_Private,
-                            files[i].FullName,
+                            filesInDir[i].FullName,
                             ProgressChanged,
                             ResponseReceived
                             ).Result
@@ -118,9 +133,8 @@ namespace Witanra.YouTubeUploader
                         t.Wait();
                         Console.WriteLine($"Uploaded video {t.Result}");
 
-
                         var playlistId = String.Empty;
-                        var playlistTitle = ReplaceVariables(settings.PlaylistTitle, fileInfo, settings.Program_Guid, fileDetail.MD5);
+                        var playlistTitle = ReplaceVariables(settings.PlaylistTitle, f, settings.Program_Guid);
                         Console.WriteLine($"Finding playlist {playlistTitle}...");
 
                         foreach (var playlist in YouTubePlaylist)
@@ -134,7 +148,7 @@ namespace Witanra.YouTubeUploader
 
                         if (playlistId == String.Empty)
                         {
-                            playlistId = YouTube.AddPlaylistAsync(playlistTitle, ReplaceVariables(settings.PlaylistDescription, fileInfo, settings.Program_Guid, fileDetail.MD5), settings.PrivacyStatus).Result;
+                            playlistId = YouTube.AddPlaylistAsync(playlistTitle, ReplaceVariables(settings.PlaylistDescription, f, settings.Program_Guid), settings.PrivacyStatus).Result;
                             YouTubePlaylist = YouTube.GetPlaylistsAsync("snippet").Result;
                         }
 
@@ -164,43 +178,43 @@ namespace Witanra.YouTubeUploader
             }
         }
 
-        private static List<string> ReplaceVariables(List<string> str, FileInfo file, Guid guid, string MD5)
+        private static List<string> ReplaceVariables(List<string> StringVariables, FileDetail filedetail, Guid guid)
         {
-            for (int i = 0; i < str.Count; i++)
+            for (int i = 0; i < StringVariables.Count; i++)
             {
-                str[i] = ReplaceVariables(str[i], file, guid, MD5);
+                StringVariables[i] = ReplaceVariables(StringVariables[i], filedetail, guid);
 
             }
-            return str;
+            return StringVariables;
         }
 
-        private static string ReplaceVariables(string str, FileInfo file, Guid guid, string MD5)
+        private static string ReplaceVariables(string StringVariable, FileDetail filedetail, Guid Program_Guid)
         {
-            str = str.Replace("{program_name}", System.AppDomain.CurrentDomain.FriendlyName);
-            str = str.Replace("{program_version}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            str = str.Replace("{program_guid}", guid.ToString());
+            StringVariable = StringVariable.Replace("{program_name}", System.AppDomain.CurrentDomain.FriendlyName);
+            StringVariable = StringVariable.Replace("{program_version}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            StringVariable = StringVariable.Replace("{program_guid}", Program_Guid.ToString());
 
-            str = str.Replace("{computer_name}", Environment.MachineName);
+            StringVariable = StringVariable.Replace("{computer_name}", Environment.MachineName);
 
-            str = str.Replace("{file}", file.Name);
-            str = str.Replace("{filepath}", file.FullName);
-            str = str.Replace("{filesize}", file.Length.ToString());
-            str = str.Replace("{fileDateCreated}", file.CreationTime.ToString());
-            str = str.Replace("{fileDateCreated_year}", file.CreationTime.ToString("yyyy"));
-            str = str.Replace("{fileDateCreated_month}", file.CreationTime.ToString("MM"));
-            str = str.Replace("{fileDateCreated_day}", file.CreationTime.ToString("dd"));
-            str = str.Replace("{fileDateModified}", file.LastWriteTime.ToString());
-            str = str.Replace("{fileDateModified_year}", file.LastWriteTime.ToString("yyyy"));
-            str = str.Replace("{fileDateModified_month}", file.LastWriteTime.ToString("MM"));
-            str = str.Replace("{fileDateModified_day}", file.LastWriteTime.ToString("dd"));
-            str = str.Replace("{uploaded_date}", DateTime.Now.ToShortDateString());
-            str = str.Replace("{uploaded_time}", DateTime.Now.ToShortTimeString());
-            str = str.Replace("{uploaded_date_year}", DateTime.Now.ToString("yyyy"));
-            str = str.Replace("{uploaded_date_month}", DateTime.Now.ToString("MM"));
-            str = str.Replace("{uploaded_date_day}", DateTime.Now.ToString("dd"));
-            str = str.Replace("{MD5}", MD5);
+            StringVariable = StringVariable.Replace("{file}", Path.GetFileName(filedetail.Filename));
+            StringVariable = StringVariable.Replace("{filepath}", filedetail.Filename);
+            StringVariable = StringVariable.Replace("{filesize}", filedetail.Size.ToString());
+            StringVariable = StringVariable.Replace("{fileDateCreated}", filedetail.Created.ToString());
+            StringVariable = StringVariable.Replace("{fileDateCreated_year}", filedetail.Created.ToString("yyyy"));
+            StringVariable = StringVariable.Replace("{fileDateCreated_month}", filedetail.Created.ToString("MM"));
+            StringVariable = StringVariable.Replace("{fileDateCreated_day}", filedetail.Created.ToString("dd"));
+            StringVariable = StringVariable.Replace("{fileDateModified}", filedetail.Modified.ToString());
+            StringVariable = StringVariable.Replace("{fileDateModified_year}", filedetail.Modified.ToString("yyyy"));
+            StringVariable = StringVariable.Replace("{fileDateModified_month}", filedetail.Modified.ToString("MM"));
+            StringVariable = StringVariable.Replace("{fileDateModified_day}", filedetail.Modified.ToString("dd"));
+            StringVariable = StringVariable.Replace("{uploaded_date}", DateTime.Now.ToShortDateString());
+            StringVariable = StringVariable.Replace("{uploaded_time}", DateTime.Now.ToShortTimeString());
+            StringVariable = StringVariable.Replace("{uploaded_date_year}", DateTime.Now.ToString("yyyy"));
+            StringVariable = StringVariable.Replace("{uploaded_date_month}", DateTime.Now.ToString("MM"));
+            StringVariable = StringVariable.Replace("{uploaded_date_day}", DateTime.Now.ToString("dd"));
+            StringVariable = StringVariable.Replace("{MD5}", filedetail.MD5);
 
-            return str;
+            return StringVariable;
         }
 
         private static List<FileDetail> LoadFileCacheList(string filename)
@@ -222,7 +236,14 @@ namespace Witanra.YouTubeUploader
 
         private static void SaveFileCacheList(List<FileDetail> list, string filename)
         {
-            JsonHelper.SerializeFile(list, filename);
+            try
+            {
+                JsonHelper.SerializeFile(list, filename);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Unable to save CacheList: {e.Message}");
+            }
         }
 
         private static FileDetail FindFileDetail(List<FileDetail> fileCache, string filename)
@@ -230,7 +251,7 @@ namespace Witanra.YouTubeUploader
             FileDetail result = null;
             foreach (var f in fileCache)
             {
-                if (f.filename == filename)
+                if (f.Filename == filename)
                 {
                     result = f;
                     break;
