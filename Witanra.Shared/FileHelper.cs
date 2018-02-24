@@ -30,7 +30,7 @@ namespace Witanra.Shared
                             {
                                 File.Delete(newFileName);
                             }
-                            Console.WriteLine($"Moving {file} to {filename}");
+                            Console.WriteLine($"Moving {file} to {newFileName}");
                             File.Move(file, newFileName);
                         }
                         catch (Exception ex)

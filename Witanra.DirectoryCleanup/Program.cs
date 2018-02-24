@@ -37,7 +37,7 @@ namespace Witanra.DirectoryCleanup
 
                 orginalDirSize = allFiles.Sum(f => f.Length);
                 currentDirSize = orginalDirSize;
-                Console.WriteLine($"Found {allFiles.Count()} files. Total size is {FileHelper.BytesToString(orginalDirSize)} .");
+                Console.WriteLine($"Found {allFiles.Count()} files. Total size is {FileHelper.BytesToString(orginalDirSize)}.");
 
                 if (currentDirSize <= dir.TargetDirSize)
                 {

@@ -35,7 +35,10 @@ namespace Witanra.Security
                     foreach (var dir in Dirs)
                     {
                         if (dir.Contains(today))
+                        {
+                            Console.WriteLine($"Not Making file for {dir} because it is today.");
                             break;
+                        }
 
                         var dirName = new DirectoryInfo(dir).Name;
                         var filename = Path.Combine(Directory.GetParent(dir).FullName, directory.Name + "_" + dirName + ".mp4");

@@ -55,13 +55,17 @@ namespace Witanra.YouTubeUploader
 
                     if (fileDetail == null)
                     {
-                        Console.WriteLine($"{f.FullName} is new");
+                        Console.WriteLine($"{f.FullName} is new!");
                         fileDetail = new FileDetail(f, GetMD5(f.FullName));
                         fileCache.Add(fileDetail);
                     }
                     else
                     {
-                        if (!fileDetail.IsMatch(f))
+                        if (fileDetail.IsMatch(f))
+                        {
+                            Console.WriteLine($"{f.FullName} hasn't changed");
+                        }
+                        else
                         {
                             Console.WriteLine($"{f.FullName} has changed!");
                             fileCache.Remove(fileDetail);
@@ -113,7 +117,7 @@ namespace Witanra.YouTubeUploader
                     }
                     try
                     {
-                        Console.WriteLine($"Uploading {i} of {filesToUpload.Count} : {f.Filename} ...");
+                        Console.WriteLine($"Uploading {i} of {filesToUpload.Count} : {f.Filename}...");
 
                         //Console.WriteLine(ReplaceVariables(settings.Title, f, settings.Program_Guid));
                         //Console.WriteLine(ReplaceVariables(settings.Description, f, settings.Program_Guid));
@@ -225,9 +229,12 @@ namespace Witanra.YouTubeUploader
             {
                 result = JsonHelper.DeserializeFile<List<FileDetail>>(filename);
             }
-            catch
+            catch (Exception e)
             {
                 Console.WriteLine("CacheList not valid, Regenerating...");
+                Console.WriteLine($"{e.Message}");
+                if (File.Exists(filename))
+                    File.Delete(filename);
                 result = new List<FileDetail>();
             }
 
@@ -262,7 +269,7 @@ namespace Witanra.YouTubeUploader
 
         private static string GetMD5(string filename)
         {
-            Console.WriteLine($"Generating MD5 for {filename} ...");
+            Console.WriteLine($"Generating MD5 for {filename}...");
             using (var md5 = System.Security.Cryptography.MD5.Create())
             {
                 using (var stream = File.OpenRead(filename))

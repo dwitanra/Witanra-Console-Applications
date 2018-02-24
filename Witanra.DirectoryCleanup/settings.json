@@ -1,17 +1,17 @@
 ﻿{
-  "logDirectory": "M:\\program\\logs",
+  "logDirectory": "E:\\Witanra_Security\\logs",
   "directories": [
     {
-      "directory": "M:\\program\\logs",
+      "directory": "E:\\Witanra_Security\\logs",
       "targetDirSize": 1073741824,
-      "minDaysOld": 30,
-      "doDelete": false
+      "minDaysOld": 365,
+      "doDelete": true
     },
     {
-      "directory": "M:\\security",
-      "targetDirSize": 724775731200,
+      "directory": "E:\\Witanra_Security\\data",
+      "targetDirSize": 536870912000,
       "minDaysOld": 30,
-      "doDelete": false
+      "doDelete": true
     }
   ]
 }

@@ -62,7 +62,8 @@ namespace Witanra.Shared
             //set defaults
             LogDirectory = AppDomain.CurrentDomain.BaseDirectory;
             ConsoleDateTimeFormat = "HH:mm:ss.ffff";
-            LogFileDateTimeFormat = "-yyyyMMdd-HHmmss-ffff";
+            //LogFileDateTimeFormat = "-yyyyMMdd-HHmmss-ffff";
+            LogFileDateTimeFormat = "-yyyyMMdd";
 
             _originalOut = Console.Out;
             _sb = new StringBuilder();
@@ -109,7 +110,7 @@ namespace Witanra.Shared
                     var f = Path.Combine(LogDirectory, AppDomain.CurrentDomain.FriendlyName + DateTime.Now.ToString(_logFileDateTimeFormat) + ".log");
 
                     Console.WriteLine($"Console Output saved to: {f}");
-                    File.WriteAllText(f, _sb.ToString());
+                    File.AppendAllText(f, _sb.ToString());
                     _sb.Clear();
                 }
             }

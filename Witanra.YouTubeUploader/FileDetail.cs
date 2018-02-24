@@ -15,6 +15,11 @@ namespace Witanra.YouTubeUploader
         public DateTime Created { get; set; }
         public string MD5 { get; set; }
 
+        public FileDetail()
+        {
+
+        }
+
         public FileDetail(FileInfo fileInfo, string MD5)
         {           
             this.Filename = fileInfo.FullName;

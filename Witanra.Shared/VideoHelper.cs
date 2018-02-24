@@ -30,14 +30,21 @@ namespace Witanra.Shared
                     }
 
                     Console.WriteLine("Saving Video to " + DestinationFile);
-                    FileHelper.LaunchCommandLineApp(TempDir, "ffmpeg.exe", "-y -framerate 5 -i %06d.jpg -c:v libx264 -r 30 -pix_fmt yuv420p " + DestinationFile);
+                    FileHelper.LaunchCommandLineApp(TempDir, "ffmpeg.exe", "-y -framerate 5 -i %06d.jpg -c:v libx264 -r 30 -pix_fmt yuv420p \"" + DestinationFile +"\"");
 
-                    if (DeleteSourceImages)
+                    if (File.Exists(DestinationFile))
                     {
-                        foreach (var f in files)
+                        if (DeleteSourceImages)
                         {
-                            File.Delete(f);
+                            foreach (var f in files)
+                            {
+                                File.Delete(f);
+                            }
                         }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"WARNING! {DestinationFile} was not found!");
                     }
                 }
             }

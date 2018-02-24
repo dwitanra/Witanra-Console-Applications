@@ -1,37 +1,37 @@
 ﻿{
-  "logDirectory": "M:\\program\\logs",
-  "tempDirectory": "M:\\temp",
-  "destinationDirectory": "M:\\security",
+  "logDirectory": "E:\\Witanra_Security\\logs",
+  "tempDirectory": "E:\\temp",
+  "destinationDirectory": "E:\\Witanra_Security\\data",
   "dateFormat": "yyyyMMdd",
 
   "Directories": [
     {
       "Name": "Upstairs",
-      "Directory": "M:\\ftp\\21"
+      "Directory": "C:\\inetpub\\ftproot\\21"
     },
     {
       "Name": "Garage",
-      "Directory": "M:\\ftp\\24"
+      "Directory": "C:\\inetpub\\ftproot\\24"
     },
     {
       "Name": "Melanie",
-      "Directory": "M:\\ftp\\C1_00626E6BC10B"
+      "Directory": "C:\\inetpub\\ftproot\\C1_00626E6BC10B"
     },
     {
       "Name": "Sunroom",
-      "Directory": "M:\\ftp\\C1_00626E589E6C"
+      "Directory": "C:\\inetpub\\ftproot\\C1_00626E589E6C"
     },
     {
       "Name": "Madeline",
-      "Directory": "M:\\ftp\\C1_00626E691FE1"
+      "Directory": "C:\\inetpub\\ftproot\\C1_00626E691FE1"
     },
     {
       "Name": "Living_Room",
-      "Directory": "M:\\ftp\\C1_C4D6553FD741"
+      "Directory": "C:\\inetpub\\ftproot\\C1_C4D6553FD741"
     },
     {
       "Name": "Garage",
-      "Directory": "M:\\ftp\\C1_C4D65540C80A"
+      "Directory": "C:\\inetpub\\ftproot\\C1_C4D65540C80A"
     }
   ]
 }

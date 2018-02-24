@@ -1,8 +1,8 @@
 ﻿{
-  "logDirectory": "M:\\security\\logs",
+  "logDirectory": "E:\\Witanra_Security\\logs",
   "cacheFile": "cacheFile.json",
   "program_guid": "8e172c5d-3f1a-40cd-b4a3-c22e483783b3",
-  "directory": "M:\\security",
+  "directory": "E:\\Witanra_Security\\data",
   "fileTypes": [
     ".mp4"
   ],
