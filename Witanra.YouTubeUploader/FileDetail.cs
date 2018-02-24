@@ -25,6 +25,7 @@ namespace Witanra.YouTubeUploader
             this.Filename = fileInfo.FullName;
             this.Size = fileInfo.Length;
             this.Modified = fileInfo.LastWriteTime;
+            this.Created = fileInfo.CreationTime;
             this.MD5 = MD5;
         }
 
