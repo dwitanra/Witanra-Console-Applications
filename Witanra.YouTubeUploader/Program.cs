@@ -42,11 +42,10 @@ namespace Witanra.YouTubeUploader
                 var YouTubePlaylist = YouTube.GetPlaylistsAsync("snippet").Result;
                 Console.WriteLine($"Found {YouTubePlaylist.Count} Playlist{((YouTubePlaylist.Count != 1) ? "s" : "")}");
 
-
                 Console.WriteLine($"Getting Files in {settings.Directory}...");
                 DirectoryInfo dir = new DirectoryInfo(settings.Directory);
                 var filesInDir = dir.GetFiles("*.*", SearchOption.AllDirectories).OrderByDescending(p => p.CreationTime)
-                    .Where(p => settings.FileTypes.Contains(p.Extension))
+                    .Where(p => settings.FileTypes.ConvertAll(d => d.ToLower()).Contains(p.Extension.ToLower()))
                     .ToList();
                 Console.WriteLine($"Found {filesInDir.Count} File{((filesInDir.Count != 1) ? "s" : "")} matching these extensions: {String.Join(", ", settings.FileTypes.ToArray())}");
 
