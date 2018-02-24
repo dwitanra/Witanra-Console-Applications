@@ -14,6 +14,9 @@ namespace Witanra.YouTubeUploader
     {
         private static ConsoleWriter _cw;
 
+        private static long _totalBytes;
+        private static DateTime _startTime;
+
         static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
@@ -63,7 +66,7 @@ namespace Witanra.YouTubeUploader
                     {
                         if (fileDetail.IsMatch(f))
                         {
-                            Console.WriteLine($"{f.FullName} hasn't changed");
+                            //Console.WriteLine($"{f.FullName} hasn't changed");
                         }
                         else
                         {
@@ -123,13 +126,16 @@ namespace Witanra.YouTubeUploader
                         //Console.WriteLine(ReplaceVariables(settings.Description, f, settings.Program_Guid));
                         //Console.WriteLine(ReplaceVariables(settings.Tags, f, settings.Program_Guid));
 
+                        _totalBytes = f.Size;
+                        _startTime = DateTime.Now;
+
                         Task<string> t = Task<string>.Run(() => YouTube.AddVideoAsync(
                             ReplaceVariables(settings.Title, f, settings.Program_Guid),
                             ReplaceVariables(settings.Description, f, settings.Program_Guid),
                             ReplaceVariables(settings.Tags, f, settings.Program_Guid),
                             settings.Category,
                             YouTube.PrivacyStatus_Private,
-                            filesInDir[i].FullName,
+                            f.Filename,
                             ProgressChanged,
                             ResponseReceived
                             ).Result
@@ -285,7 +291,9 @@ namespace Witanra.YouTubeUploader
             switch (progress.Status)
             {
                 case UploadStatus.Uploading:
-                    Console.WriteLine($"{progress.BytesSent} bytes sent.");
+                    Console.WriteLine($"{Math.Round((double)progress.BytesSent / _totalBytes * 100, 2)}% uploaded " +
+                        $"({FileHelper.BytesToString(progress.BytesSent)}/{FileHelper.BytesToString(_totalBytes)}) at " +
+                        $"{ FileHelper.BytesToString(Convert.ToInt64(progress.BytesSent / (DateTime.Now - _startTime).TotalSeconds)) }/s.");
                     break;
 
                 case UploadStatus.Failed:

@@ -127,7 +127,7 @@ namespace Witanra.Shared
             Console.WriteLine($"Exited {exe}");
         }
 
-        public static string BytesToString(long bytes)
+        public static string BytesToString(long bytes, bool showBytes = false)
         {
             string[] sizes = { "B", "KB", "MB", "GB", "TB" };
             int order = 0;
@@ -140,7 +140,10 @@ namespace Witanra.Shared
 
             // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
             // show a single decimal place, and no space.
-            return String.Format("{0:0.##} {1} ({2} bytes)", len, sizes[order], bytes);
+            if (showBytes)
+                return String.Format("{0:0.##} {1} ({2} bytes)", len, sizes[order], bytes);
+            else
+                return String.Format("{0:0.##} {1}", len, sizes[order]);
         }
     }
 }
