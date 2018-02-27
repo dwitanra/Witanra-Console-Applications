@@ -51,42 +51,21 @@ namespace Witanra.YouTubeUploader
                     filesInDir.AddRange(dir.GetFiles($"*{filetype}", SearchOption.AllDirectories));
                 }
 
-                foreach (var item in filesInDir.ToList())
+                if (settings.FileNameIgnore?.Count > 0)
                 {
-                    foreach (var ignore in settings.FileNameIgnore)
+                    foreach (var item in filesInDir.ToList())
                     {
-                        if (item.FullName.ToLower().Contains(ignore))
+                        foreach (var ignore in settings.FileNameIgnore)
                         {
-                            filesInDir.Remove(item);
-                            break;
-                        }
+                            if (item.FullName.ToLower().Contains(ignore))
+                            {
+                                filesInDir.Remove(item);
+                                break;
+                            }
 
+                        }
                     }
                 }
-
-                //var filesInDir = dir.GetFiles("*.*", SearchOption.AllDirectories).ToList();
-
-                //settings.FileTypes = settings.FileTypes.ConvertAll(x => x.ToLower());
-                //settings.FileNameIgnore = settings.FileNameIgnore.ConvertAll(x => x.ToLower());
-                //foreach (var item in filesInDir.ToList())
-                //{
-                //    if (!settings.FileTypes.Contains(item.Extension.ToLower()))
-                //    {
-                //        filesInDir.Remove(item);
-                //    }
-                //    else
-                //    {
-                //        foreach (var ignore in settings.FileNameIgnore)
-                //        {
-                //            if (item.FullName.ToLower().Contains(ignore))
-                //            {
-                //                filesInDir.Remove(item);
-                //                break;
-                //            }
-
-                //        }
-                //    }
-                //}
 
                 filesInDir = filesInDir.OrderByDescending(p => p.CreationTime).ToList();
                 Console.WriteLine($"Found {filesInDir.Count} File{((filesInDir.Count != 1) ? "s" : "")} " +
