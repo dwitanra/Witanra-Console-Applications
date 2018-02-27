@@ -44,10 +44,54 @@ namespace Witanra.YouTubeUploader
 
                 Console.WriteLine($"Getting Files in {settings.Directory}...");
                 DirectoryInfo dir = new DirectoryInfo(settings.Directory);
-                var filesInDir = dir.GetFiles("*.*", SearchOption.AllDirectories).OrderByDescending(p => p.CreationTime)
-                    .Where(p => settings.FileTypes.ConvertAll(d => d.ToLower()).Contains(p.Extension.ToLower()))
-                    .ToList();
-                Console.WriteLine($"Found {filesInDir.Count} File{((filesInDir.Count != 1) ? "s" : "")} matching these extensions: {String.Join(", ", settings.FileTypes.ToArray())}");
+                List<FileInfo> filesInDir = new List<FileInfo>();
+
+                foreach (var filetype in settings.FileTypes)
+                {
+                    filesInDir.AddRange(dir.GetFiles($"*{filetype}", SearchOption.AllDirectories));
+                }
+
+                foreach (var item in filesInDir.ToList())
+                {
+                    foreach (var ignore in settings.FileNameIgnore)
+                    {
+                        if (item.FullName.ToLower().Contains(ignore))
+                        {
+                            filesInDir.Remove(item);
+                            break;
+                        }
+
+                    }
+                }
+
+                //var filesInDir = dir.GetFiles("*.*", SearchOption.AllDirectories).ToList();
+
+                //settings.FileTypes = settings.FileTypes.ConvertAll(x => x.ToLower());
+                //settings.FileNameIgnore = settings.FileNameIgnore.ConvertAll(x => x.ToLower());
+                //foreach (var item in filesInDir.ToList())
+                //{
+                //    if (!settings.FileTypes.Contains(item.Extension.ToLower()))
+                //    {
+                //        filesInDir.Remove(item);
+                //    }
+                //    else
+                //    {
+                //        foreach (var ignore in settings.FileNameIgnore)
+                //        {
+                //            if (item.FullName.ToLower().Contains(ignore))
+                //            {
+                //                filesInDir.Remove(item);
+                //                break;
+                //            }
+
+                //        }
+                //    }
+                //}
+
+                filesInDir = filesInDir.OrderByDescending(p => p.CreationTime).ToList();
+                Console.WriteLine($"Found {filesInDir.Count} File{((filesInDir.Count != 1) ? "s" : "")} " +
+                    $" matching these extensions: {String.Join(", ", settings.FileTypes.ToArray())}" +
+                    $" that doesn't contain: {String.Join(", ", settings.FileNameIgnore.ToArray())}");
 
                 Console.WriteLine($"Loading and Generating File Cache...");
                 var fileCache = LoadFileCacheList(settings.CacheFile);
@@ -81,6 +125,7 @@ namespace Witanra.YouTubeUploader
 
                 Console.WriteLine("Figuring out what video files need to be uploaded...");
                 var filesToUpload = new List<FileDetail>();
+                long sizeToUpload = 0;
                 foreach (var f in fileCache)
                 {
                     var doUpload = true;
@@ -102,7 +147,19 @@ namespace Witanra.YouTubeUploader
 
                     if (doUpload)
                     {
+                        if (filesToUpload.Count + 1 > settings.UploadLimitCount)
+                        {
+                            Console.WriteLine($"Upload limit count reached. {settings.UploadLimitCount}");
+                            break;
+                        }
+
+                        if (sizeToUpload + f.Size >= settings.UploadLimitSize)
+                        {
+                            Console.WriteLine($"Upload limit size would be exceeded. {FileHelper.BytesToString(sizeToUpload + f.Size)} greater than {FileHelper.BytesToString(settings.UploadLimitSize)}");                           
+                        }
+
                         filesToUpload.Add(f);
+                        sizeToUpload += f.Size;                        
                     }
                 }
                 Console.WriteLine($"Found {filesToUpload.Count} Video File{((filesToUpload.Count != 1) ? "s" : "")} that need to be uploaded.");
@@ -112,11 +169,7 @@ namespace Witanra.YouTubeUploader
                 foreach (var f in filesToUpload)
                 {
                     i++;
-                    if (i > settings.UploadLimit)
-                    {
-                        Console.WriteLine($"Upload limit reached. Stopping. {settings.UploadLimit}");
-                        break;
-                    }
+
                     try
                     {
                         Console.WriteLine($"Uploading {i} of {filesToUpload.Count} : {f.Filename}...");

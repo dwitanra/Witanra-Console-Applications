@@ -11,6 +11,7 @@ namespace Witanra.YouTubeUploader
         public string CacheFile { get; set; }
         public Guid Program_Guid { get; set; }
         public string Directory { get; set; }
+        public List<string> FileNameIgnore { get; set; }
         public List<string> FileTypes { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
@@ -20,7 +21,8 @@ namespace Witanra.YouTubeUploader
         public string PlaylistTitle { get; set; }
         public string PlaylistDescription { get; set; }
 
-        public int UploadLimit { get; set; }
+        public int UploadLimitCount { get; set; }
+        public long UploadLimitSize { get; set; }
 
         public string LogDirectory { get; set; }
     }
