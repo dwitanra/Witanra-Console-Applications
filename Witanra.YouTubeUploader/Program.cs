@@ -70,7 +70,7 @@ namespace Witanra.YouTubeUploader
                 filesInDir = filesInDir.OrderByDescending(p => p.CreationTime).ToList();
                 Console.WriteLine($"Found {filesInDir.Count} File{((filesInDir.Count != 1) ? "s" : "")} " +
                     $" matching these extensions: {String.Join(", ", settings.FileTypes.ToArray())}" +
-                    $" that doesn't contain: {String.Join(", ", settings.FileNameIgnore.ToArray())}");
+                    $" that doesn't contain: {String.Join(", ", settings.FileNameIgnore?.ToArray())}");
 
                 Console.WriteLine($"Loading and Generating File Cache...");
                 var fileCache = LoadFileCacheList(settings.CacheFile);
