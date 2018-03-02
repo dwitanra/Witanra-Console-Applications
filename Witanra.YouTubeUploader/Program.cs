@@ -132,13 +132,14 @@ namespace Witanra.YouTubeUploader
                             break;
                         }
 
-                        if (sizeToUpload + f.Size >= settings.UploadLimitSize)
+                        if (sizeToUpload + f.Size > settings.UploadLimitSize)
                         {
-                            Console.WriteLine($"Upload limit size would be exceeded. {FileHelper.BytesToString(sizeToUpload + f.Size)} greater than {FileHelper.BytesToString(settings.UploadLimitSize)}");                           
+                            Console.WriteLine($"Upload limit size would be exceeded. {FileHelper.BytesToString(sizeToUpload + f.Size)} greater than {FileHelper.BytesToString(settings.UploadLimitSize)}");
+                            break;
                         }
 
                         filesToUpload.Add(f);
-                        sizeToUpload += f.Size;                        
+                        sizeToUpload += f.Size;
                     }
                 }
                 Console.WriteLine($"Found {filesToUpload.Count} Video File{((filesToUpload.Count != 1) ? "s" : "")} that need to be uploaded.");
