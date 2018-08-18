@@ -5,7 +5,8 @@ using System.IO;
 namespace Witanra.Shared
 {
     public class FileHelper
-    {
+    {       
+
         public static void MoveFileByNameAndDate(string Name, string DateFormat, string SourceDirectory, string DestinationDirectory, int NumberOfDaysToLookBack)
         {
             Console.WriteLine($"Getting Files from {SourceDirectory}...");
