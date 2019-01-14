@@ -23,6 +23,7 @@ namespace Witanra.YouTubeUploader
 
         public int UploadLimitCount { get; set; }
         public long UploadLimitSize { get; set; }
+        public int UploadFileTryCount { get; set; }
 
         public string LogDirectory { get; set; }
     }

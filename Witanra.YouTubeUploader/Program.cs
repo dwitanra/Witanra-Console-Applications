@@ -105,6 +105,9 @@ namespace Witanra.YouTubeUploader
                 Console.WriteLine("Figuring out what video files need to be uploaded...");
                 var filesToUpload = new List<FileDetail>();
                 long sizeToUpload = 0;
+
+                fileCache = fileCache.OrderByDescending(p => p.Created).ToList();
+
                 foreach (var f in fileCache)
                 {
                     var doUpload = true;
@@ -138,6 +141,12 @@ namespace Witanra.YouTubeUploader
                             break;
                         }
 
+                        if (f.TryCount >= settings.UploadFileTryCount)
+                        {
+                            Console.WriteLine($"File Upload Count Exceeded. {f.Filename} {f.TryCount} greater than {settings.UploadFileTryCount}");
+                            continue;
+                        }
+
                         filesToUpload.Add(f);
                         sizeToUpload += f.Size;
                     }
@@ -153,6 +162,9 @@ namespace Witanra.YouTubeUploader
                     try
                     {
                         Console.WriteLine($"Uploading {i} of {filesToUpload.Count} : {f.Filename}...");
+
+                        fileCache.Where(fc => fc.Filename == f.Filename).FirstOrDefault().TryCount += 1;
+                        SaveFileCacheList(fileCache, settings.CacheFile);
 
                         //Console.WriteLine(ReplaceVariables(settings.Title, f, settings.Program_Guid));
                         //Console.WriteLine(ReplaceVariables(settings.Description, f, settings.Program_Guid));

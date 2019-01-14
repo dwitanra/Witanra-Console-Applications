@@ -20,5 +20,6 @@
   "playlistTitle": "{fileDateCreated_year} Witanra Security",
   "playlistDescription": "{fileDateCreated_year} Witanra Security  Created by {program_name} {program_version} at {uploaded_date}  Program GUID: {program_guid}. Contact witanra@gmail.com for information related to this playlist. Copyright {fileDateCreated_year} Denis Witanra.",
   "uploadLimitCount": 50,
-  "uploadLimitSize": 21474836480
+  "uploadLimitSize": 21474836480,
+  "uploadLimitSize":  5
 }

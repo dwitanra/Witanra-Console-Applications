@@ -29,7 +29,7 @@ namespace Witanra.Security
             {
                 try
                 {
-                    FileHelper.MoveFileByNameAndDate(directory.Name, settings.DateFormat, directory.Directory, settings.DestinationDirectory, 30);
+                    FileHelper.MoveFileByNameAndDate(directory.Name, settings.DateFormats, directory.Directory, settings.DestinationDirectory, 30);
 
                     var Dirs = Directory.GetDirectories(Path.Combine(settings.DestinationDirectory, directory.Name));
                     foreach (var dir in Dirs)

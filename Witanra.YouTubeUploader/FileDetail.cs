@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Witanra.YouTubeUploader
 {
@@ -14,6 +10,7 @@ namespace Witanra.YouTubeUploader
         public DateTime Modified { get; set; }
         public DateTime Created { get; set; }
         public string MD5 { get; set; }
+        public int TryCount { get; set; }
 
         public FileDetail()
         {
