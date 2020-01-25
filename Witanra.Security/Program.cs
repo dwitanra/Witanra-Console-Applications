@@ -23,8 +23,6 @@ namespace Witanra.Security
 
             Console.WriteLine($"Found { settings.Directories.Count} Directory in Settings");
 
-            var today = DateTime.Today.ToString(settings.DateFormat);
-
             foreach (var directory in settings.Directories)
             {
                 try
@@ -34,7 +32,16 @@ namespace Witanra.Security
                     var Dirs = Directory.GetDirectories(Path.Combine(settings.DestinationDirectory, directory.Name));
                     foreach (var dir in Dirs)
                     {
-                        if (dir.Contains(today))
+                        var IsToday = false;
+                        foreach (string DateFormat in settings.DateFormats)
+                        {
+                            if (dir.Contains(DateTime.Today.ToString(DateFormat)))
+                            {                                
+                                IsToday = true;
+                                break;
+                            }
+                        }
+                        if (IsToday)
                         {
                             Console.WriteLine($"Not Making file for {dir} because it is today.");
                             break;
@@ -67,6 +74,7 @@ namespace Witanra.Security
 
         static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            Console.WriteLine("Exception:" + e.ExceptionObject.ToString());
             CloseWait();
             Environment.Exit(1);
         }

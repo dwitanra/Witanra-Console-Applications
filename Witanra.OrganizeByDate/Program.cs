@@ -20,7 +20,12 @@ namespace Witanra.OrganizeByDate
             var settings = JsonHelper.DeserializeFile<Settings>("settings.json");
             _cw.LogDirectory = settings.LogDirectory;
 
-            MoveFileByCreatedDate(settings.DateFormat, settings.SourceDirectory, settings.DestinationDirectory);
+            Console.WriteLine($"Found { settings.DirectoryPairs.Count} Directory Pairs in Settings");
+
+            foreach (var directorypair in settings.DirectoryPairs)
+            {
+                MoveFileByCreatedDate(settings.DateFormat, directorypair.SourceDirectory, directorypair.DestinationDirectory);
+            }            
 
             CloseWait();
         }
@@ -61,6 +66,7 @@ namespace Witanra.OrganizeByDate
 
         static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            Console.WriteLine("Exception:" + e.ExceptionObject.ToString());
             CloseWait();
             Environment.Exit(1);
         }

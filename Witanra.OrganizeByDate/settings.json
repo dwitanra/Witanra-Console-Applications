@@ -1,6 +1,10 @@
 ﻿{
   "logDirectory": "C:\\temp\\logs",
   "dateFormat": "yyyy-MM-dd",
-  "sourceDirectory": "C:\\temp\\source",
-  "destinationDirectory": "C:\\temp\\destination"
+  "directoryPairs": [
+    {
+      "sourceDirectory": "C:\\temp\\source",
+      "destinationDirectory": "C:\\temp\\destination"
+    }
+  ]   
 }

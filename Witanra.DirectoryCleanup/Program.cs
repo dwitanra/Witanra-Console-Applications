@@ -83,9 +83,13 @@ namespace Witanra.DirectoryCleanup
                             {
                                 Console.WriteLine($"Unable to delete {files[i].FullName}. Exception: {e.Message}");
                             }
-
                         }
                     }
+                }
+
+                if (dir.DoDeleteEmptyDir)
+                {
+                    DeleteDirIfEmpty(dir.Directory, dir.DoDelete);
                 }
 
                 Console.WriteLine($"Original Directory Size: {FileHelper.BytesToString(orginalDirSize)}");
@@ -105,9 +109,32 @@ namespace Witanra.DirectoryCleanup
 
             CloseWait();
         }
+
         private static void WriteStop(long CurrentDirSize, long TargetDirSize)
         {
             Console.WriteLine($"STOPPED SINCE Directory size ({FileHelper.BytesToString(CurrentDirSize)}) is now less than target size {FileHelper.BytesToString(TargetDirSize)}");
+        }
+
+        private static void DeleteDirIfEmpty(string Dir, bool DoDelete)
+        {
+            foreach (var directory in Directory.GetDirectories(Dir))
+            {
+                DeleteDirIfEmpty(directory, DoDelete);
+                if (Directory.GetFiles(directory).Length == 0 &&
+                    Directory.GetDirectories(directory).Length == 0)
+                {
+                    if (DoDelete)
+                    {
+                        Console.WriteLine($"Deleting Directory Because it is empty {directory}");
+                        Directory.Delete(directory, false);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Would Have Deleted Directory Because it is empty {directory}");
+
+                    }
+                }
+            }
         }
 
         static void CloseWait()
@@ -120,6 +147,7 @@ namespace Witanra.DirectoryCleanup
 
         static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            Console.WriteLine("Exception:" + e.ExceptionObject.ToString());
             CloseWait();
             Environment.Exit(1);
         }

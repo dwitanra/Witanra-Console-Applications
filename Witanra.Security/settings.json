@@ -1,17 +1,23 @@
 ﻿{
-  "logDirectory": "E:\\Witanra_Security\\logs",
-  "tempDirectory": "E:\\temp",
-  "destinationDirectory": "E:\\Witanra_Security\\data",
-  "dateFormat": "yyyyMMdd",
-
+  "logDirectory": "P:\\Witanra_Security\\logs",
+  "tempDirectory": "P:\\temp\\Witanra_Security",
+  "destinationDirectory": "P:\\Witanra_Security\\data",
+  "dateFormats": [
+    "yyyyMMdd",
+    "yyyy-MM-dd"
+  ],
   "Directories": [
     {
-      "Name": "Upstairs",
-      "Directory": "C:\\inetpub\\ftproot\\21"
+      "Name": "Kitchen",
+      "Directory": "C:\\inetpub\\ftproot\\AMC00005_A9FBF4"
     },
     {
       "Name": "Garage",
       "Directory": "C:\\inetpub\\ftproot\\24"
+    },
+    {
+      "Name": "Upstairs",
+      "Directory": "C:\\inetpub\\ftproot\\AMC00099_EF73AF"
     },
     {
       "Name": "Melanie",
@@ -19,19 +25,35 @@
     },
     {
       "Name": "Sunroom",
-      "Directory": "C:\\inetpub\\ftproot\\C1_00626E589E6C"
+      "Directory": "C:\\inetpub\\ftproot\\C1_00626E69609A"
     },
     {
       "Name": "Madeline",
       "Directory": "C:\\inetpub\\ftproot\\C1_00626E691FE1"
     },
     {
-      "Name": "Living_Room",
+      "Name": "Broken",
       "Directory": "C:\\inetpub\\ftproot\\C1_C4D6553FD741"
     },
     {
-      "Name": "Garage",
+      "Name": "Living_Room",
       "Directory": "C:\\inetpub\\ftproot\\C1_C4D65540C80A"
+    },
+    {
+      "Name": "Driveway",
+      "Directory": "C:\\inetpub\\ftproot\\FI9900P_00626E82ECE9"
+    },
+    {
+      "Name": "Front_Door",
+      "Directory": "C:\\inetpub\\ftproot\\FI9900P_00626E82ECDE"
+    },
+    {
+      "Name": "Kitchen",
+      "Directory": "C:\\inetpub\\ftproot\\Security_Kitchen"
+    },
+    {
+      "Name": "Upstairs",
+      "Directory": "C:\\inetpub\\ftproot\\Security_Upstairs"
     }
   ]
 }
