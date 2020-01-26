@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace Witanra.Shared
 {
@@ -11,7 +12,9 @@ namespace Witanra.Shared
         public static void MoveFileByNameAndDate(string Name, List<string> DateFormats, string SourceDirectory, string DestinationDirectory, int NumberOfDaysToLookBack)
         {
             Console.WriteLine($"Getting Files from {SourceDirectory}...");
-            string[] files = Directory.GetFiles(SourceDirectory, "*.*", SearchOption.AllDirectories);
+            Console.WriteLine("DENNIS");
+            var info = new DirectoryInfo(SourceDirectory);
+            var files = info.GetFiles("*.*", SearchOption.AllDirectories).OrderBy(p => p.CreationTime).ToArray();          
             Console.WriteLine($"{files.Length + 1} file{((files.Length + 1 != 1) ? "s" : "")} found");
 
             for (int i = 0; i <= NumberOfDaysToLookBack; i++)
@@ -20,22 +23,21 @@ namespace Witanra.Shared
                 {
                     //var FileForDateFound = false;
                     var Date = DateTime.Today.AddDays(-1 * i).ToString(DateFormat);
-                    foreach (string file in files)
+                    foreach (var file in files)
                     {
-                        if (file.Contains(Date))
+                        if (file.FullName.Contains(Date))
                         {
                             //FileForDateFound = true;
-                            var filename = Path.GetFileName(file);
+                            var filename = file.CreationTime.ToString("yyyyMMdd-mmss") + "_" + Path.GetFileName(file.FullName);
+
                             try
                             {
                                 var newFileName = Path.Combine(DestinationDirectory, Name, Date, filename);
-                                (new FileInfo(newFileName)).Directory.Create();
-                                if (File.Exists(newFileName))
-                                {
-                                    File.Delete(newFileName);
-                                }
-                                Console.WriteLine($"Moving {file} to {newFileName}");
-                                File.Move(file, newFileName);
+                                Directory.CreateDirectory(Path.GetDirectoryName(newFileName));
+                                newFileName = GetUniqueFilename(newFileName);
+
+                                Console.WriteLine($"Moving {file.FullName} to {newFileName}");
+                                File.Move(file.FullName, newFileName);
                             }
                             catch (Exception ex)
                             {

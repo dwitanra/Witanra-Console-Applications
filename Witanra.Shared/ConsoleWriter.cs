@@ -87,7 +87,7 @@ namespace Witanra.Shared
             get { return new ASCIIEncoding(); }
         }
         public override void WriteLine(string message)
-        {
+      {
             var s = $"{DateTime.Now.ToString(_consoleDateTimeFormat)} {message}";
             _originalOut.WriteLine(s);
             _sb.AppendLine(s);
