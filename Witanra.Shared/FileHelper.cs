@@ -12,7 +12,6 @@ namespace Witanra.Shared
         public static void MoveFileByNameAndDate(string Name, List<string> DateFormats, string SourceDirectory, string DestinationDirectory, int NumberOfDaysToLookBack)
         {
             Console.WriteLine($"Getting Files from {SourceDirectory}...");
-            Console.WriteLine("DENNIS");
             var info = new DirectoryInfo(SourceDirectory);
             var files = info.GetFiles("*.*", SearchOption.AllDirectories).OrderBy(p => p.CreationTime).ToArray();          
             Console.WriteLine($"{files.Length + 1} file{((files.Length + 1 != 1) ? "s" : "")} found");
@@ -28,7 +27,7 @@ namespace Witanra.Shared
                         if (file.FullName.Contains(Date))
                         {
                             //FileForDateFound = true;
-                            var filename = file.CreationTime.ToString("yyyyMMdd-mmss") + "_" + Path.GetFileName(file.FullName);
+                            var filename = file.CreationTime.ToString("yyyyMMdd-HHmmssffff") + "_" + Path.GetFileName(file.FullName);
 
                             try
                             {
