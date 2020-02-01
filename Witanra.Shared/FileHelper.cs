@@ -22,6 +22,7 @@ namespace Witanra.Shared
                 {
                     //var FileForDateFound = false;
                     var Date = DateTime.Today.AddDays(-1 * i).ToString(DateFormat);
+                    var DateStandard = DateTime.Today.AddDays(-1 * i).ToString(DateFormats[0]);
                     foreach (var file in files)
                     {
                         if (file.FullName.Contains(Date))
@@ -31,7 +32,7 @@ namespace Witanra.Shared
 
                             try
                             {
-                                var newFileName = Path.Combine(DestinationDirectory, Name, Date, filename);
+                                var newFileName = Path.Combine(DestinationDirectory, Name, DateStandard, filename);
                                 Directory.CreateDirectory(Path.GetDirectoryName(newFileName));
                                 newFileName = GetUniqueFilename(newFileName);
 

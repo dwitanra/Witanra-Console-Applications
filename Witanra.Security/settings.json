@@ -3,8 +3,8 @@
   "tempDirectory": "P:\\temp\\Witanra_Security",
   "destinationDirectory": "P:\\Witanra_Security\\data",
   "dateFormats": [
-    "yyyyMMdd",
-    "yyyy-MM-dd"
+    "yyyy-MM-dd",
+    "yyyyMMdd"
   ],
   "Directories": [
     {

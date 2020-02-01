@@ -8,11 +8,11 @@ namespace Witanra.Shared
         public static void MakeVideoFromImages(string SourceDirWithImages, string DestinationFile, string TempDir, bool DeleteSourceImages)
         {  
             try
-            {                
-                Console.WriteLine($"Getting jpg files from {SourceDirWithImages}...");
+            { 
                 string[] files = Directory.GetFiles(SourceDirWithImages, "*.jpg");
                 if (files.Length > 0)
                 {
+                    Console.WriteLine($"Processing {files.Length} jpgs files from {SourceDirWithImages}...");
                     TempDir = Path.Combine(TempDir, Path.GetFileNameWithoutExtension(DestinationFile));
                     DestinationFile = FileHelper.GetUniqueFilename(DestinationFile);
 
