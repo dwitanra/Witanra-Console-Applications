@@ -46,11 +46,17 @@ namespace Witanra.DirectoryCleanup
                 else
                 {
                     Console.WriteLine($"Finding files older than {dir.MinDaysOld} days...");
-                    var files = allFiles
+                    var files = allFiles                       
                         .Where(f => f.CreationTime <= DateTime.Today.AddDays(-1 * dir.MinDaysOld))
-                        .Where(f => f.LastWriteTime <= DateTime.Today.AddDays(-1 * dir.MinDaysOld))
+                        .Where(f => f.LastWriteTime <= DateTime.Today.AddDays(-1 * dir.MinDaysOld))                        
                         .OrderByDescending(f => f.CreationTime)
                         .ThenByDescending(f => f.LastWriteTime).ToList();
+
+                    if (dir.ExcludeReadOnly)
+                    {
+                        files = files.Where(f => f.IsReadOnly == false).ToList();
+
+                    }
                     Console.WriteLine($"Found {files.Count()} file{((files.Count != 1) ? "s" : "")} that are older than {dir.MinDaysOld} days.");
 
                     for (int i = files.Count() - 1; i >= 0; i--)

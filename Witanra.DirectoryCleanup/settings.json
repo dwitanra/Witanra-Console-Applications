@@ -1,19 +1,21 @@
 ﻿{
-  "logDirectory": "E:\\Witanra_Security\\logs",
+  "logDirectory": "P:\\Witanra_Security\\logs",
   "directories": [
     {
-      "directory": "E:\\Witanra_Security\\logs",
+      "directory": "P:\\Witanra_Security\\logs",
       "targetDirSize": 1073741824,
       "minDaysOld": 365,
       "doDeleteEmptyDir": true,
-      "doDelete": true
+      "doDelete": true,
+      "excludeReadOnly": true
     },
     {
-      "directory": "E:\\Witanra_Security\\data",
+      "directory": "P:\\Witanra_Security\\data",
       "targetDirSize": 536870912000,
-      "minDaysOld": 30,
+      "minDaysOld": 90,
       "doDeleteEmptyDir": true,
-      "doDelete": true
+      "doDelete": true,
+      "excludeReadOnly": true
     }
   ]
 }
