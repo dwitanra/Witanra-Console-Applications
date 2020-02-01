@@ -9,7 +9,7 @@ namespace Witanra.Shared
         {  
             try
             {                
-                //Console.WriteLine($"Getting jpg files from {SourceDirWithImages}");
+                Console.WriteLine($"Getting jpg files from {SourceDirWithImages}...");
                 string[] files = Directory.GetFiles(SourceDirWithImages, "*.jpg");
                 if (files.Length > 0)
                 {
@@ -26,26 +26,20 @@ namespace Witanra.Shared
                         string newFile = TempDir + "\\" + Convert.ToString(i).PadLeft(6, '0') + ".jpg";
                         //Console.WriteLine("Copying file from " + oldFile + " to " + newFile);
                         if (new FileInfo(oldFile).Length > 0)
-                            File.Copy(oldFile, newFile);
-                    }
-
-                    Console.WriteLine("Saving Video to " + DestinationFile);
-                    FileHelper.LaunchCommandLineApp(TempDir, "ffmpeg.exe", "-y -framerate 5 -i %06d.jpg -c:v libx264 -r 30 -pix_fmt yuv420p \"" + DestinationFile +"\"");
-
-                    if (File.Exists(DestinationFile))
-                    {
-                        if (DeleteSourceImages)
                         {
-                            foreach (var f in files)
+                            if (DeleteSourceImages)
                             {
-                                File.Delete(f);
+                                File.Move(oldFile, newFile);
                             }
-                        }
+                            else
+                            {
+                                File.Copy(oldFile, newFile);
+                            }
+                        }                           
                     }
-                    else
-                    {
-                        Console.WriteLine($"WARNING! {DestinationFile} was not found!");
-                    }
+
+                    Console.WriteLine($"Saving Video to {DestinationFile}...");
+                    FileHelper.LaunchCommandLineApp(TempDir, "ffmpeg.exe", "-y -framerate 5 -i %06d.jpg -c:v libx264 -r 30 -pix_fmt yuv420p -preset veryfast \"" + DestinationFile +"\"");
                 }
             }
             catch (Exception ex)
@@ -54,7 +48,6 @@ namespace Witanra.Shared
             }
 
             FileHelper.DeleteDirSafe(TempDir);
-
         }
     }
 }

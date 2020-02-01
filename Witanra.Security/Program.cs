@@ -27,7 +27,7 @@ namespace Witanra.Security
             {
                 try
                 {
-                    FileHelper.MoveFileByNameAndDate(directory.Name, settings.DateFormats, directory.Directory, settings.DestinationDirectory, 30);
+                    FileHelper.MoveFileByNameAndDate(directory.Name, settings.DateFormats, directory.Directory, settings.DestinationDirectory, 30, false);
 
                     var Dirs = Directory.GetDirectories(Path.Combine(settings.DestinationDirectory, directory.Name));
                     foreach (var dir in Dirs)
@@ -43,12 +43,12 @@ namespace Witanra.Security
                         }
                         if (IsToday)
                         {
-                            Console.WriteLine($"Not Making file for {dir} because it is today.");
-                            break;
+                            Console.WriteLine($"Not Making video file for {dir} because it is today.");
+                           break;
                         }
 
                         var dirName = new DirectoryInfo(dir).Name;
-                        var filename = Path.Combine(Directory.GetParent(dir).FullName, directory.Name + "_" + dirName + ".mp4");
+                        var filename = Path.Combine(settings.DestinationDirectory, directory.Name + "_" + dirName + ".mp4");
                         VideoHelper.MakeVideoFromImages(dir, filename, settings.TempDirectory, true);
                     }
                     FileHelper.DeleteDirIfEmpty(directory.Directory);

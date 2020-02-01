@@ -24,18 +24,18 @@ namespace Witanra.OrganizeByDate
 
             foreach (var directorypair in settings.DirectoryPairs)
             {
-                MoveFileByCreatedDate(settings.DateFormat, directorypair.SourceDirectory, directorypair.DestinationDirectory);
+                MoveFileByCreatedDate(settings.DateFormat, directorypair.SourceDirectory, directorypair.DestinationDirectory, true);
             }            
 
             CloseWait();
         }
 
-        public static void MoveFileByCreatedDate(string DateFormat, string SourceDirectory, string DestinationDirectory)
+        public static void MoveFileByCreatedDate(string DateFormat, string SourceDirectory, string DestinationDirectory, bool DisplayMove)
         {
             Console.WriteLine($"Getting Files from {SourceDirectory}...");
             string[] files = Directory.GetFiles(SourceDirectory, "*.*", SearchOption.AllDirectories);
             Console.WriteLine($"{files.Length + 1} file{((files.Length + 1 != 1) ? "s" : "")} found");
-
+            Console.WriteLine($"Moving {SourceDirectory} to {DestinationDirectory}...");
             foreach (string file in files)
             {
                 var filename = Path.GetFileName(file);
@@ -43,9 +43,12 @@ namespace Witanra.OrganizeByDate
                 {
                     var date = new DateTime(Math.Min(File.GetCreationTime(file).Ticks, File.GetLastWriteTime(file).Ticks));
                     var newFileName = Path.Combine(DestinationDirectory, date.Date.ToString(DateFormat), filename);
-                    newFileName = FileHelper.GetUniqueFilename(newFileName);                    
+                    newFileName = FileHelper.GetUniqueFilename(newFileName);
 
-                    Console.WriteLine($"Moving {file} to {newFileName}");
+                    if (DisplayMove)
+                    {
+                        Console.WriteLine($"Moving {file} to {newFileName}...");
+                    }
                     (new FileInfo(newFileName)).Directory.Create();
                     File.Move(file, newFileName);
                 }

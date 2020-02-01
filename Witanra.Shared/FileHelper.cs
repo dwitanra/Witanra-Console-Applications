@@ -9,13 +9,13 @@ namespace Witanra.Shared
     public class FileHelper
     {
 
-        public static void MoveFileByNameAndDate(string Name, List<string> DateFormats, string SourceDirectory, string DestinationDirectory, int NumberOfDaysToLookBack)
+        public static void MoveFileByNameAndDate(string Name, List<string> DateFormats, string SourceDirectory, string DestinationDirectory, int NumberOfDaysToLookBack, bool DisplayMove)
         {
             Console.WriteLine($"Getting Files from {SourceDirectory}...");
             var info = new DirectoryInfo(SourceDirectory);
-            var files = info.GetFiles("*.*", SearchOption.AllDirectories).OrderBy(p => p.CreationTime).ToArray();          
+            var files = info.GetFiles("*.*", SearchOption.AllDirectories).OrderBy(p => p.CreationTime).ToArray();
             Console.WriteLine($"{files.Length + 1} file{((files.Length + 1 != 1) ? "s" : "")} found");
-
+            Console.WriteLine($"Moving {SourceDirectory} to {DestinationDirectory}...");
             for (int i = 0; i <= NumberOfDaysToLookBack; i++)
             {
                 foreach (string DateFormat in DateFormats)
@@ -35,7 +35,10 @@ namespace Witanra.Shared
                                 Directory.CreateDirectory(Path.GetDirectoryName(newFileName));
                                 newFileName = GetUniqueFilename(newFileName);
 
-                                Console.WriteLine($"Moving {file.FullName} to {newFileName}");
+                                if (DisplayMove)
+                                {
+                                    Console.WriteLine($"Moving {file.FullName} to {newFileName}...");
+                                }
                                 File.Move(file.FullName, newFileName);
                             }
                             catch (Exception ex)
