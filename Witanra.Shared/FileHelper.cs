@@ -155,5 +155,10 @@ namespace Witanra.Shared
             else
                 return String.Format("{0:0.##} {1}", len, sizes[order]);
         }
+
+        public static string GetSafeFilename(string filename)
+        {
+            return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
+        }
     }
 }

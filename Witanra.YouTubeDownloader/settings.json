@@ -1,0 +1,52 @@
+﻿{
+  "logDirectory": "P:\\YouTube\\_log",
+  "tempDirectory": "P:\\YouTube\\_temp",
+  "cacheDirectory": "P:\\YouTube\\_cache",
+  "Downloads": [
+    {
+      "Name": "Playlists",
+      "MediaType": "AudioVideo",
+      "DownloadDirectory": "P:\\YouTube\\Playlist",
+      "CleanDownloadDirectory": true,
+      "FileNameTemplate": "{playlistName}\\{playlistNumber} - {videoTitle}.mp4",
+      "YouTubeURLQueries": [
+        "https://www.youtube.com/playlist?list=PLTB4lASYUIo_50cANKhA4ngD4QvYwEe9i",
+        "https://www.youtube.com/playlist?list=PL31eSR4CToGQUt10BRLK0LmGhWmD4iA6r",
+        "https://www.youtube.com/playlist?list=PLWstuI05OwxxTFTH6aaiLAbnxAH-UMLVK",
+        "https://www.youtube.com/playlist?list=PL31eSR4CToGQUt10BRLK0LmGhWmD4iA6r",
+        "https://www.youtube.com/playlist?list=PL31eSR4CToGTjQT09CGwEY2WIkM7yL3sj",
+        "https://www.youtube.com/playlist?list=PL31eSR4CToGQ5cbXEXSqS88MIRt1qFYyy",
+        "https://www.youtube.com/playlist?list=PLTB4lASYUIo-RRAVpjECX3inhRsilZ-Og",
+        "https://www.youtube.com/playlist?list=FLDjAqzAI7Pcyl2hMHbthc-Q",
+        "https://www.youtube.com/playlist?list=PLTB4lASYUIo8XJV1AkcqWEbrlYBSilq0N",
+        "https://www.youtube.com/playlist?list=PLw-VjHDlEOgto2M4-AR-eZsfs92O85Wlw",
+        "https://www.youtube.com/playlist?list=PL6Lt9p1lIRZ311J9ZHuzkR5A3xesae2pk",
+        "https://www.youtube.com/playlist?list=PLOci2rRb5g3iUxFh_olD0dWGpzWPwdlOi",
+        "https://www.youtube.com/playlist?list=PL47oRh0-pTouthHPv6AbALWPvPJHlKiF7",
+        "https://www.youtube.com/playlist?list=PLQw-AwSCH8G1cVzJkHEs-ODoaPmo3E7vX",
+        "https://www.youtube.com/playlist?list=PLQw-AwSCH8G3Dhw4vAu0R7OfxDWdUbhaR"
+      ]
+    },
+    {
+      "MediaType": "AudioVideo",
+      "DownloadDirectory": "P:\\YouTube\\Channel",
+      "CleanDownloadDirectory": false,
+      "FileNameTemplate": "{videoTitle}.mp4",
+      "YouTubeURLQueries": [
+        "https://www.youtube.com/channel/UCqECaJ8Gagnn7YCbPEzWH6g"
+      ]
+    },
+    {
+      "MediaType": "AudioVideo",
+      "DownloadDirectory": "P:\\YouTube\\User",
+      "CleanDownloadDirectory": false,
+      "FileNameTemplate": "{videoTitle}.mp4",
+      "YouTubeURLQueries": [
+        "https://www.youtube.com/user/SesameStreet",
+        "https://www.youtube.com/user/KatyPerryMusic",
+        "https://www.youtube.com/user/taylorswift",
+        "https://www.youtube.com/user/Grimezsz"
+      ]
+    }
+  ]
+}
