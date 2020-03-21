@@ -31,6 +31,10 @@ namespace Witanra.YouTubeDownloader
             Console.WriteLine($"Found { settings.Downloads.Count} Download Items in Settings");
             foreach (var download in settings.Downloads)
             {
+                if (download.CleanDownloadDirectory)
+                {
+                    Directory.Delete(download.DownloadDirectory, true);
+                }
                 foreach (var youuTubeURLQueries in download.YouTubeURLQueries)
                 {
                     var query = ParseQuery(youuTubeURLQueries);
@@ -54,12 +58,9 @@ namespace Witanra.YouTubeDownloader
 
         private static void Save_Videos(ExecutedQuery executedQuery, Settings settings, SettingDownload settingDownload)
         {
-            Directory.CreateDirectory(settingDownload.DownloadDirectory);
+            
 
-            if (settingDownload.CleanDownloadDirectory)
-            {
-                Directory.Delete(settingDownload.DownloadDirectory, true);
-            }
+            Directory.CreateDirectory(settingDownload.DownloadDirectory);
 
             int videoOrder = 1;
             foreach (var video in executedQuery.Videos)

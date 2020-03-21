@@ -11,6 +11,7 @@
       "FileNameTemplate": "{playlistName}\\{playlistNumber} - {videoTitle}.mp4",
       "YouTubeURLQueries": [
         "https://www.youtube.com/playlist?list=PLTB4lASYUIo_50cANKhA4ngD4QvYwEe9i",
+        "https://www.youtube.com/playlist?list=PLTB4lASYUIo-adGm2asVBYdOy9NRB_P-4",
         "https://www.youtube.com/playlist?list=PL31eSR4CToGQUt10BRLK0LmGhWmD4iA6r",
         "https://www.youtube.com/playlist?list=PLWstuI05OwxxTFTH6aaiLAbnxAH-UMLVK",
         "https://www.youtube.com/playlist?list=PL31eSR4CToGQUt10BRLK0LmGhWmD4iA6r",
