@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -34,12 +35,27 @@ namespace Witanra.ImageDownloader
                     {
                         using (WebClient client = new WebClient())
                         {
+                            byte[] data = null;
                             if (!String.IsNullOrWhiteSpace(action.Source_URL_Username))
                             {
                                 client.Credentials = new NetworkCredential(action.Source_URL_Username, action.Source_URL_Password);
                             }
-                            client.DownloadFileAsync(new Uri(action.Source_URL), action.Destination_Folder + action.Destination_FileName);
-                            //Console.WriteLine($"Saved {action.Destination_Folder + action.Destination_FileName}");
+                            client.DownloadDataCompleted +=
+                                delegate (object sender, DownloadDataCompletedEventArgs e)
+                                {
+                                    data = e.Result;
+                                    foreach (var filename in action.Destination_FileNames)
+                                    {
+                                        var actualFileName = ReplaceVariables(filename);
+                                        var directory = Path.GetDirectoryName(actualFileName);
+                                        Directory.CreateDirectory(directory);
+                                        File.WriteAllBytes(actualFileName, data);
+                                        Console.WriteLine($"Saved {actualFileName}");
+                                    }
+                                };
+                            var uri = new Uri(action.Source_URL);
+                            Console.WriteLine($"Downloading {uri.Host}...");
+                            client.DownloadDataAsync(uri);                           
                         }
                     }
                     catch (Exception ex)
@@ -56,13 +72,24 @@ namespace Witanra.ImageDownloader
                     Console.WriteLine($"Not Looping");
                     break;
                 }
-                _cw.SaveToDisk();                
+                _cw.SaveToDisk();
             }
 
             CloseWait();
         }
 
-        private static void CloseWait()
+        private static string ReplaceVariables(string StringVariable)
+        {
+            var now = DateTime.Now;
+            StringVariable = StringVariable.Replace("{year}", now.ToString("yyyy"));
+            StringVariable = StringVariable.Replace("{month}", now.ToString("MM"));
+            StringVariable = StringVariable.Replace("{day}", now.ToString("dd"));
+            StringVariable = StringVariable.Replace("{date}", now.ToString("yyyyMMdd-HHmmssffff"));
+
+            return StringVariable;
+        }
+
+            private static void CloseWait()
         {
             Console.WriteLine("Application finished, will close in 5 seconds.");
             Console.WriteLine("");
