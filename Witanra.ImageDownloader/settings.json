@@ -1,0 +1,9 @@
+﻿{
+  "logDirectory": "P:\\Witanra_Security\\logs",
+  "Loop": false,
+  "IntervalInSeconds": 10,
+  "ImageDownloadActions": [
+    {
+    }
+  ]
+}
