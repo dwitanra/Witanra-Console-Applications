@@ -1,0 +1,31 @@
+﻿{
+  "logDirectory": "P:\\Witanra_Security\\logs",
+  "Loop": false,
+  "IntervalInSeconds": 5,
+  "Processes": [
+    {
+      "Name": "Plex Media Server",
+      "Priority": "Normal",
+      "StartIfMissing": true,
+      "Path": "C:\\Program Files (x86)\\Plex\\Plex Media Server\\Plex Media Server.exe"
+    },
+    {
+      "Name": "googledrivesync",
+      "Priority": "BelowNormal",
+      "StartIfMissing": true,
+      "Path": "C:\\Program Files\\Google\\Drive\\googledrivesync.exe"
+    },
+    {
+      "Name": "AmazonPhotos",
+      "Priority": "BelowNormal",
+      "StartIfMissing": true,
+      "Path": "C:\\Users\\Background\\AppData\\Local\\Amazon Drive\\AmazonPhotos.exe"
+    },
+    {
+      "Name": "Docker Desktop",
+      "Priority": "Normal",
+      "StartIfMissing": true,
+      "Path": "C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe"
+    }
+  ]
+}
