@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Witanra.Shared;
 
 namespace Witanra.ProcessManager
@@ -31,21 +28,28 @@ namespace Witanra.ProcessManager
 
                 foreach (var settingProcess in settings.Processes)
                 {
-                    try
-                    {
-                        var process = processes.Where(a => a.ProcessName == settingProcess.Name).FirstOrDefault();
-                        //TODO do to all with this process name!
-                        //try catch needs to be within a single process
-                        if (process == null && settingProcess.StartIfMissing)
+                    if (processes.Where(a => a.ProcessName == settingProcess.Name).FirstOrDefault() == null && settingProcess.StartIfMissing)
+                    {                       
+                        if (File.Exists(settingProcess.Path))
                         {
                             Console.WriteLine($"Process Missing {settingProcess.Name}. Starting {settingProcess.Path}");
-                            if (File.Exists(settingProcess.Path))
-                            {
-                                process = Process.Start(settingProcess.Path);
-                            }
+                            Process.Start(settingProcess.Path);
                         }
-                        if (process != null)
-                        {
+                    }
+
+                    foreach (var process in processes.Where(a => a.ProcessName == settingProcess.Name))
+                        try
+                        { 
+                            if (settingProcess.StopIfFound)
+                            {
+                                if ((DateTime.Now - process.StartTime).TotalSeconds > settingProcess.StopTotalSeconds)
+                                {
+                                    Console.WriteLine($"Process Found {settingProcess.Name}. Stopping {settingProcess.Path}");
+                                    process.Kill();
+                                    break;
+                                }
+                            }
+
                             var priority = (ProcessPriorityClass)Enum.Parse(typeof(ProcessPriorityClass), settingProcess.Priority);
                             if (process.PriorityClass != priority)
                             {
@@ -57,16 +61,12 @@ namespace Witanra.ProcessManager
                                 }
                             }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            Console.WriteLine($"Process not found.");
+                            Console.WriteLine($"Process Error {process.ProcessName} Exception: {ex.Message}");
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Process Error Exception: {ex.Message}");
-                    }
                 }
+
                 Console.WriteLine($"Waiting {settings.IntervalInSeconds} seconds...");
                 Thread.Sleep(settings.IntervalInSeconds * 1000);
 
@@ -78,15 +78,15 @@ namespace Witanra.ProcessManager
                 _cw.SaveToDisk();
             }
 
-            CloseWait();
+            CloseWait(settings.IntervalInSeconds);
         }
 
-        private static void CloseWait()
+        private static void CloseWait(int IntervalInSeconds = 30)
         {
-            Console.WriteLine("Application finished, will close in 5 seconds.");
+            Console.WriteLine($"Application finished, will close in {IntervalInSeconds} seconds.");
             Console.WriteLine("");
             _cw.SaveToDisk();
-            Thread.Sleep(5000);
+            Thread.Sleep(IntervalInSeconds * 1000);
         }
 
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)

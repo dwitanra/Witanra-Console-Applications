@@ -7,25 +7,45 @@
       "Name": "Plex Media Server",
       "Priority": "Normal",
       "StartIfMissing": true,
+      "StopIfFound": false,
       "Path": "C:\\Program Files (x86)\\Plex\\Plex Media Server\\Plex Media Server.exe"
     },
     {
       "Name": "googledrivesync",
       "Priority": "BelowNormal",
       "StartIfMissing": true,
+      "StopIfFound": false,
       "Path": "C:\\Program Files\\Google\\Drive\\googledrivesync.exe"
     },
     {
       "Name": "AmazonPhotos",
-      "Priority": "BelowNormal",
-      "StartIfMissing": true,
+      "Priority": "Normal",
+      "StartIfMissing": false,
+      "StopIfFound": true,
+      "StopTotalSeconds": 3600,
       "Path": "C:\\Users\\Background\\AppData\\Local\\Amazon Drive\\AmazonPhotos.exe"
     },
     {
       "Name": "Docker Desktop",
       "Priority": "Normal",
       "StartIfMissing": true,
+      "StopIfFound": false,
       "Path": "C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe"
+    },
+    {
+      "Name": "Taskmgr",
+      "Priority": "Normal",
+      "StartIfMissing": false,
+      "StopIfFound": true,
+      "Path": ""
+    },
+    {
+      "Name": "chrome",
+      "Priority": "Normal",
+      "StartIfMissing": false,
+      "StopIfFound": true,
+      "StopTotalSeconds": 3600,
+      "Path": ""
     }
   ]
 }
