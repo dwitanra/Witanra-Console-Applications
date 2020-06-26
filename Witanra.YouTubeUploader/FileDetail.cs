@@ -14,11 +14,10 @@ namespace Witanra.YouTubeUploader
 
         public FileDetail()
         {
-
         }
 
         public FileDetail(FileInfo fileInfo, string MD5)
-        {           
+        {
             this.Filename = fileInfo.FullName;
             this.Size = fileInfo.Length;
             this.Modified = fileInfo.LastWriteTime;
@@ -28,7 +27,7 @@ namespace Witanra.YouTubeUploader
 
         public bool IsMatch(FileInfo fileInfo)
         {
-            FileDetail f = new FileDetail(fileInfo, "");           
+            FileDetail f = new FileDetail(fileInfo, "");
             return (this.Filename == f.Filename && Size == f.Size && Modified == f.Modified && Created == f.Created);
         }
     }

@@ -8,6 +8,5 @@
         public bool StopIfFound { get; set; }
         public int StopTotalSeconds { get; set; }
         public string Path { get; set; }
-
     }
 }

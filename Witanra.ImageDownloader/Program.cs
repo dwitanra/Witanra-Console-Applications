@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Witanra.Shared;
 
 namespace Witanra.ImageDownloader
 {
-    class Program
+    internal class Program
     {
         private static ConsoleWriter _cw;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
@@ -55,7 +51,7 @@ namespace Witanra.ImageDownloader
                                 };
                             var uri = new Uri(action.Source_URL);
                             Console.WriteLine($"Downloading {uri.Host}...");
-                            client.DownloadDataAsync(uri);                           
+                            client.DownloadDataAsync(uri);
                         }
                     }
                     catch (Exception ex)
@@ -89,7 +85,7 @@ namespace Witanra.ImageDownloader
             return StringVariable;
         }
 
-            private static void CloseWait()
+        private static void CloseWait()
         {
             Console.WriteLine("Application finished, will close in 5 seconds.");
             Console.WriteLine("");

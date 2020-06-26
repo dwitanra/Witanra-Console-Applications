@@ -6,9 +6,9 @@ namespace Witanra.Shared
     public class VideoHelper
     {
         public static void MakeVideoFromImages(string SourceDirWithImages, string DestinationFile, string TempDir, bool DeleteSourceImages)
-        {  
+        {
             try
-            { 
+            {
                 string[] files = Directory.GetFiles(SourceDirWithImages, "*.jpg");
                 if (files.Length > 0)
                 {
@@ -35,11 +35,11 @@ namespace Witanra.Shared
                             {
                                 File.Copy(oldFile, newFile);
                             }
-                        }                           
+                        }
                     }
 
                     Console.WriteLine($"Saving Video to {DestinationFile}...");
-                    FileHelper.LaunchCommandLineApp(TempDir, "ffmpeg.exe", "-y -framerate 5 -i %06d.jpg -c:v libx264 -r 30 -pix_fmt yuv420p -preset veryfast \"" + DestinationFile +"\"");
+                    FileHelper.LaunchCommandLineApp(TempDir, "ffmpeg.exe", "-y -framerate 5 -i %06d.jpg -c:v libx264 -r 30 -pix_fmt yuv420p -preset veryfast \"" + DestinationFile + "\"");
                 }
             }
             catch (Exception ex)

@@ -2,13 +2,11 @@
 
 namespace Witanra.YouTubeDownloader.Models
 {
-    class Settings
+    internal class Settings
     {
         public string LogDirectory { get; set; }
         public string TempDirectory { get; set; }
         public string CacheDirectory { get; set; }
         public List<SettingDownload> Downloads { get; set; }
-       
-
     }
 }

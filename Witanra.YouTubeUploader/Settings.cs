@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Witanra.YouTubeUploader
 {
-    class Settings
+    internal class Settings
     {
         public string CacheFile { get; set; }
         public Guid Program_Guid { get; set; }

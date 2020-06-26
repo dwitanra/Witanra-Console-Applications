@@ -1,5 +1,4 @@
-﻿
-namespace Witanra.YouTubeDownloader.Models
+﻿namespace Witanra.YouTubeDownloader.Models
 {
     public enum DownloadMode
     {

@@ -2,7 +2,7 @@
 
 namespace Witanra.Security
 {
-    class Settings
+    internal class Settings
     {
         public string TempDirectory { get; set; }
         public List<string> DateFormats { get; set; }

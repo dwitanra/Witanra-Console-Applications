@@ -8,7 +8,6 @@ namespace Witanra.Shared
 {
     public class FileHelper
     {
-
         public static void MoveFileByNameAndDate(string Name, List<string> DateFormats, string SourceDirectory, string DestinationDirectory, int NumberOfDaysToLookBack, bool DisplayMove)
         {
             Console.WriteLine($"Getting Files from {SourceDirectory}...");
@@ -131,7 +130,6 @@ namespace Witanra.Shared
             }
             finally
             {
-
             }
 
             Console.WriteLine($"Exited {exe}");

@@ -5,11 +5,11 @@ using Witanra.Shared;
 
 namespace Witanra.OrganizeByDate
 {
-    class Program
+    internal class Program
     {
         private static ConsoleWriter _cw;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
@@ -25,7 +25,7 @@ namespace Witanra.OrganizeByDate
             foreach (var directorypair in settings.DirectoryPairs)
             {
                 MoveFileByCreatedDate(settings.DateFormat, directorypair.SourceDirectory, directorypair.DestinationDirectory, true);
-            }            
+            }
 
             CloseWait();
         }
@@ -59,7 +59,7 @@ namespace Witanra.OrganizeByDate
             }
         }
 
-        static void CloseWait()
+        private static void CloseWait()
         {
             Console.WriteLine("Application finished, will close in 30 seconds.");
             Console.WriteLine("");
@@ -67,14 +67,14 @@ namespace Witanra.OrganizeByDate
             Thread.Sleep(30000);
         }
 
-        static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Console.WriteLine("Exception:" + e.ExceptionObject.ToString());
             CloseWait();
             Environment.Exit(1);
         }
 
-        static void OnProcessExit(object sender, EventArgs e)
+        private static void OnProcessExit(object sender, EventArgs e)
         {
             _cw.SaveToDisk();
         }

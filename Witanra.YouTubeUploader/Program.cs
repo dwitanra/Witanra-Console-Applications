@@ -10,14 +10,14 @@ using Witanra.Shared;
 
 namespace Witanra.YouTubeUploader
 {
-    class Program
+    internal class Program
     {
         private static ConsoleWriter _cw;
 
         private static long _totalBytes;
         private static DateTime _startTime;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
@@ -62,7 +62,6 @@ namespace Witanra.YouTubeUploader
                                 filesInDir.Remove(item);
                                 break;
                             }
-
                         }
                     }
                 }
@@ -153,7 +152,6 @@ namespace Witanra.YouTubeUploader
                 }
                 Console.WriteLine($"Found {filesToUpload.Count} Video File{((filesToUpload.Count != 1) ? "s" : "")} that need to be uploaded.");
 
-
                 int i = 0;
                 foreach (var f in filesToUpload)
                 {
@@ -209,7 +207,6 @@ namespace Witanra.YouTubeUploader
                         YouTube.AddVideoToPlaylist(playlistId, t.Result);
                         Console.WriteLine($"Video {t.Result} added to playlist {playlistId}...");
                     }
-
                     catch (AggregateException ex)
                     {
                         PrintAggregateException(ex);
@@ -237,7 +234,6 @@ namespace Witanra.YouTubeUploader
             for (int i = 0; i < StringVariables.Count; i++)
             {
                 StringVariables[i] = ReplaceVariables(StringVariables[i], filedetail, guid);
-
             }
             return StringVariables;
         }
@@ -350,10 +346,9 @@ namespace Witanra.YouTubeUploader
         private static void ResponseReceived(Video video)
         {
             Console.WriteLine($"Video id '{video.Id}' was successfully uploaded.");
-
         }
 
-        static void CloseWait()
+        private static void CloseWait()
         {
             Console.WriteLine("Application finished, will close in 30 seconds.");
             Console.WriteLine("");
@@ -361,13 +356,13 @@ namespace Witanra.YouTubeUploader
             Thread.Sleep(30000);
         }
 
-        static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             CloseWait();
             Environment.Exit(1);
         }
 
-        static void OnProcessExit(object sender, EventArgs e)
+        private static void OnProcessExit(object sender, EventArgs e)
         {
             _cw.SaveToDisk();
         }

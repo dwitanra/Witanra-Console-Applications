@@ -2,7 +2,7 @@
 
 namespace Witanra.YouTubeDownloader.Models
 {
-    class SettingDownload
+    internal class SettingDownload
     {
         public string Name;
 

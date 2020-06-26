@@ -7,11 +7,11 @@ using Witanra.Shared;
 
 namespace Witanra.ProcessManager
 {
-    class Program
+    internal class Program
     {
         private static ConsoleWriter _cw;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
@@ -29,7 +29,7 @@ namespace Witanra.ProcessManager
                 foreach (var settingProcess in settings.Processes)
                 {
                     if (processes.Where(a => a.ProcessName == settingProcess.Name).FirstOrDefault() == null && settingProcess.StartIfMissing)
-                    {                       
+                    {
                         if (File.Exists(settingProcess.Path))
                         {
                             Console.WriteLine($"Process Missing {settingProcess.Name}. Starting {settingProcess.Path}");
@@ -39,7 +39,7 @@ namespace Witanra.ProcessManager
 
                     foreach (var process in processes.Where(a => a.ProcessName == settingProcess.Name))
                         try
-                        { 
+                        {
                             if (settingProcess.StopIfFound)
                             {
                                 if ((DateTime.Now - process.StartTime).TotalSeconds > settingProcess.StopTotalSeconds)

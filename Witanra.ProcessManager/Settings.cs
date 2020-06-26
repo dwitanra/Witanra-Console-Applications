@@ -8,6 +8,5 @@ namespace Witanra.ProcessManager
         public int IntervalInSeconds { get; set; }
         public bool Loop { get; set; }
         public List<SettingProcess> Processes { get; set; }
-
     }
 }

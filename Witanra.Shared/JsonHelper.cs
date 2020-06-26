@@ -5,12 +5,12 @@ namespace Witanra.Shared
 {
     public class JsonHelper
     {
-        public static T DeserializeFile<T> (string filename)
+        public static T DeserializeFile<T>(string filename)
         {
-           return Deserialize<T>(String.Join("", File.ReadAllLines(filename)));
+            return Deserialize<T>(String.Join("", File.ReadAllLines(filename)));
         }
 
-        public static T Deserialize<T> (string json)
+        public static T Deserialize<T>(string json)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
         }

@@ -6,11 +6,11 @@ using Witanra.Shared;
 
 namespace Witanra.DirectoryCleanup
 {
-    class Program
+    internal class Program
     {
         private static ConsoleWriter _cw;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
@@ -46,16 +46,15 @@ namespace Witanra.DirectoryCleanup
                 else
                 {
                     Console.WriteLine($"Finding files older than {dir.MinDaysOld} days...");
-                    var files = allFiles                       
+                    var files = allFiles
                         .Where(f => f.CreationTime <= DateTime.Today.AddDays(-1 * dir.MinDaysOld))
-                        .Where(f => f.LastWriteTime <= DateTime.Today.AddDays(-1 * dir.MinDaysOld))                        
+                        .Where(f => f.LastWriteTime <= DateTime.Today.AddDays(-1 * dir.MinDaysOld))
                         .OrderByDescending(f => f.CreationTime)
                         .ThenByDescending(f => f.LastWriteTime).ToList();
 
                     if (dir.ExcludeReadOnly)
                     {
                         files = files.Where(f => f.IsReadOnly == false).ToList();
-
                     }
                     Console.WriteLine($"Found {files.Count()} file{((files.Count != 1) ? "s" : "")} that are older than {dir.MinDaysOld} days.");
 
@@ -137,13 +136,12 @@ namespace Witanra.DirectoryCleanup
                     else
                     {
                         Console.WriteLine($"Would Have Deleted Directory Because it is empty {directory}");
-
                     }
                 }
             }
         }
 
-        static void CloseWait()
+        private static void CloseWait()
         {
             Console.WriteLine("Application finished, will close in 30 seconds.");
             Console.WriteLine("");
@@ -151,13 +149,14 @@ namespace Witanra.DirectoryCleanup
             Thread.Sleep(30000);
         }
 
-        static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Console.WriteLine("Exception:" + e.ExceptionObject.ToString());
             CloseWait();
             Environment.Exit(1);
         }
-        static void OnProcessExit(object sender, EventArgs e)
+
+        private static void OnProcessExit(object sender, EventArgs e)
         {
             _cw.SaveToDisk();
         }

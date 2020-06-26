@@ -12,11 +12,12 @@ using YoutubeExplode.Models.MediaStreams;
 
 namespace Witanra.YouTubeDownloader
 {
-    class Program
+    internal class Program
     {
         private static ConsoleWriter _cw;
         private static YoutubeClient _youtubeClient;
-        static void Main(string[] args)
+
+        private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
@@ -58,8 +59,6 @@ namespace Witanra.YouTubeDownloader
 
         private static void Save_Videos(ExecutedQuery executedQuery, Settings settings, SettingDownload settingDownload)
         {
-            
-
             Directory.CreateDirectory(settingDownload.DownloadDirectory);
 
             int videoOrder = 1;
@@ -67,7 +66,7 @@ namespace Witanra.YouTubeDownloader
             {
                 var fileName = GetFileName(executedQuery, video, settingDownload, videoOrder);
                 if (!File.Exists(fileName))
-                    {
+                {
                     try
                     {
                         Save_Media(video.Id, settings, settingDownload, fileName);
@@ -78,18 +77,17 @@ namespace Witanra.YouTubeDownloader
                     }
                 }
                 videoOrder++;
-
             }
         }
 
         private static string GetFileName(ExecutedQuery executedQuery, Video video, SettingDownload settingDownload, int videoOrder)
         {
-            var result =  settingDownload.FileNameTemplate;
+            var result = settingDownload.FileNameTemplate;
             result = result.Replace("{playlistName}", FileHelper.GetSafeFilename(executedQuery.Title));
             result = result.Replace("{playlistNumber}", FileHelper.GetSafeFilename(videoOrder.ToString()));
             result = result.Replace("{videoTitle}", FileHelper.GetSafeFilename(video.Title));
             result = Path.Combine(settingDownload.DownloadDirectory, result);
-            
+
             return result;
         }
 
@@ -176,7 +174,7 @@ namespace Witanra.YouTubeDownloader
                     // Overwrite files
                     args.Add("-y");
 
-                    // Set output file                   
+                    // Set output file
                     args.Add($"\"{tempFileName}\"");
                     Directory.CreateDirectory(Path.GetDirectoryName(tempFileName));
                     Directory.CreateDirectory(Path.GetDirectoryName(filename));
@@ -231,7 +229,6 @@ namespace Witanra.YouTubeDownloader
                .ThenByDescending(s => s.Framerate)
                .First();
             }
-
         }
 
         private static void DownloadMediaStream(MediaStreamInfo audioStreamInfo, string filename, Settings settings)

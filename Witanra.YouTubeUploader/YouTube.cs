@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -110,7 +109,7 @@ namespace Witanra.YouTubeUploader
             if (videoId == null || playlistId == null)
                 return;
 
-            var youtubeService = await Task<string>.Run(() => GetYouTubeService().Result);  
+            var youtubeService = await Task<string>.Run(() => GetYouTubeService().Result);
 
             var newPlaylistItem = new PlaylistItem();
             newPlaylistItem.Snippet = new PlaylistItemSnippet();
@@ -119,10 +118,9 @@ namespace Witanra.YouTubeUploader
             newPlaylistItem.Snippet.ResourceId.Kind = "youtube#video";
             newPlaylistItem.Snippet.ResourceId.VideoId = videoId;
             newPlaylistItem = await youtubeService.PlaylistItems.Insert(newPlaylistItem, "snippet").ExecuteAsync();
-
         }
 
-        public static async Task<string>AddPlaylistAsync(string playlist_name, string playlist_description, string PrivacyStatus)
+        public static async Task<string> AddPlaylistAsync(string playlist_name, string playlist_description, string PrivacyStatus)
         {
             var youtubeService = await Task<string>.Run(() => GetYouTubeService().Result);
             var newPlaylist = new Playlist();
@@ -143,7 +141,7 @@ namespace Witanra.YouTubeUploader
             {
                 credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
-                    // This OAuth 2.0 access scope allows an application to upload files to the                   
+                    // This OAuth 2.0 access scope allows an application to upload files to the
                     new[] { YouTubeService.Scope.YoutubeUpload, YouTubeService.Scope.YoutubeReadonly, YouTubeService.Scope.Youtube },
                     "user",
                     CancellationToken.None,
@@ -157,7 +155,5 @@ namespace Witanra.YouTubeUploader
                 ApplicationName = Assembly.GetExecutingAssembly().GetName().Name
             });
         }
-
-
     }
 }

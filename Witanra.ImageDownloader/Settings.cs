@@ -2,7 +2,7 @@
 
 namespace Witanra.ImageDownloader
 {
-    class Settings
+    internal class Settings
     {
         public string LogDirectory { get; set; }
         public bool Loop { get; set; }

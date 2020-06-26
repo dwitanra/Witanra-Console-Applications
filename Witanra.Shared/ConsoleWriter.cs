@@ -12,6 +12,7 @@ namespace Witanra.Shared
         private string _consoleDateTimeFormat;
         private string _logFileDateTimeFormat;
         public bool DoStart { get; set; }
+
         public string LogDirectory
         {
             get
@@ -82,16 +83,19 @@ namespace Witanra.Shared
                 WriteLine("");
             }
         }
+
         public override Encoding Encoding
         {
             get { return new ASCIIEncoding(); }
         }
+
         public override void WriteLine(string message)
-      {
+        {
             var s = $"{DateTime.Now.ToString(_consoleDateTimeFormat)} {message}";
             _originalOut.WriteLine(s);
             _sb.AppendLine(s);
         }
+
         public override void Write(string message)
         {
             _originalOut.Write(message);
