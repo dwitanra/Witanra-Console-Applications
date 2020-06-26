@@ -4,7 +4,7 @@
   "IntervalInSeconds": 1,
   "ImageDownloadActions": [
     {
-      "Source_URL": "http://192.168.0.20/cgi-bin/CGIProxy.fcgi?cmd=snapPicture2&usr=admin&pwd=witanra!",
+      "Source_URL": "http://192.168.0.20/cgi-bin/CGIProxy.fcgi?cmd=snapPicture2&usr=admin&pwd=",
       "Destination_FileNames": [
         "P:\\Shared Documents\\_Security\\Madeline.jpg",
         "P:\\Witanra_Security\\data\\Madeline\\{year}-{month}-{day}\\{date}.jpg"
