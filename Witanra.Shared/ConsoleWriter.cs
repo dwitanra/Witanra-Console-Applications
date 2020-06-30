@@ -9,6 +9,7 @@ namespace Witanra.Shared
         private TextWriter _originalOut;
         private StringBuilder _sb;
         private string _logDirectory;
+        private bool _alwaysWriteLog;
         private string _consoleDateTimeFormat;
         private string _logFileDateTimeFormat;
         public bool DoStart { get; set; }
@@ -25,6 +26,18 @@ namespace Witanra.Shared
                 {
                     _logDirectory = value;
                 }
+            }
+        }
+
+        public bool AlwaysWriteLog
+        {
+            get
+            {
+                return _alwaysWriteLog;
+            }
+            set
+            {
+                _alwaysWriteLog = value;
             }
         }
 
@@ -58,10 +71,11 @@ namespace Witanra.Shared
             }
         }
 
-        public ConsoleWriter(bool DoIntroduction = true)
+        public ConsoleWriter(bool DoIntroduction = true, bool AlwaysWriteLog = true)
         {
             //set defaults
             LogDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            this.AlwaysWriteLog = AlwaysWriteLog;
             ConsoleDateTimeFormat = "HH:mm:ss.ffff";
             //LogFileDateTimeFormat = "-yyyyMMdd-HHmmss-ffff";
             LogFileDateTimeFormat = "-yyyyMMdd";
@@ -94,12 +108,20 @@ namespace Witanra.Shared
             var s = $"{DateTime.Now.ToString(_consoleDateTimeFormat)} {message}";
             _originalOut.WriteLine(s);
             _sb.AppendLine(s);
+            if (_alwaysWriteLog)
+            {
+                SaveToDisk();
+            }
         }
 
         public override void Write(string message)
         {
             _originalOut.Write(message);
             _sb.Append(message);
+            if (_alwaysWriteLog)
+            {
+                SaveToDisk();
+            }
         }
 
         public void SaveToDisk()

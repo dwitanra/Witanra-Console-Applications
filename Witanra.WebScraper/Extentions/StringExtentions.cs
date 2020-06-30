@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Witanra.AccountLogger.Extentions
+namespace Witanra.WebScraper.Extentions
 {
     public static class StringExtentions
     {

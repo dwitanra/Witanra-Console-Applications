@@ -1,17 +1,23 @@
-﻿using System;
+﻿using OpenQA.Selenium;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
-using Witanra.AccountLogger.Extentions;
+using Witanra.WebScraper.Extentions;
 
-namespace Witanra.AccountLogger.Models
+namespace Witanra.WebScraper.Models
 {
-    public class WebPageResult
+    public class WebpageResult
     {
         public DateTime dateTime;
         public string URL;
         public string HTML;
-        public byte[] Full_Screenshot;
-        public List<byte[]> Focus_Screenshots;
+        public Dictionary<string, byte[]> Screenshots;
+
+        public void GetScreenshotFocused(IWebDriver driver, string iFrame_XPath, string Focus_XPath)
+        {
+        }
 
         public void SaveToFolder(string SaveDirectory = "", bool PrePendDate = false, bool PrePendTime = false)
         {
@@ -29,15 +35,11 @@ namespace Witanra.AccountLogger.Models
 
             File.WriteAllText($"{path}index.html", HTML);
 
-            if (Full_Screenshot != null)
+            foreach (var Screenshot in Screenshots)
             {
-                File.WriteAllBytes($"{path}Full.png", Full_Screenshot);
-            }
-            var i = 1;
-            foreach (var Screenshot_Focused in Focus_Screenshots)
-            {
-                File.WriteAllBytes($"{path}Focused_{i}.png", Screenshot_Focused);
-                i++;
+                var filename = Screenshot.Key;
+
+                File.WriteAllBytes($"{path}{filename}.png", Screenshot.Value);
             }
         }
     }

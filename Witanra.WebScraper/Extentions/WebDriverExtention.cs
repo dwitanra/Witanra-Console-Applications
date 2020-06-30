@@ -6,9 +6,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
-using Witanra.AccountLogger.Models;
+using Witanra.WebScraper;
+using Witanra.WebScraper.Models;
 
-namespace Witanra.AccountLogger.Extentions
+namespace Witanra.WebScraper.Extentions
 {
     public static class WebDriverExtention
     {
@@ -23,7 +24,7 @@ namespace Witanra.AccountLogger.Extentions
             });
         }
 
-        public static WebPageResult GetWebPageResult(this IWebDriver webDriver, IWebElement focusedWebElement = null, IWebElement singleCaptureWebElement = null)
+        public static WebpageResult GetWebPageResult(this IWebDriver webDriver, IWebElement focusedWebElement = null, IWebElement singleCaptureWebElement = null)
         {
             var focusedWebElements = new List<IWebElement>();
             if (focusedWebElement != null)
@@ -40,13 +41,23 @@ namespace Witanra.AccountLogger.Extentions
             return webDriver.GetWebPageResult(focusedWebElements, singleCaptureWebElements);
         }
 
-        public static WebPageResult GetWebPageResult(this IWebDriver webDriver, List<IWebElement> focusedWebElements = null, List<IWebElement> singleCaptureWebElements = null)
+        public static WebpageResult GetWebPageResult(this IWebDriver webDriver, List<IWebElement> focusedWebElements, List<IWebElement> singleCaptureWebElements)
         {
-            var Full_Screenshot = webDriver.GetEntireScreenshot(singleCaptureWebElements).ToByteArray(ImageFormat.Png);
-            var Focused_Screenshots = new List<byte[]>();
+            var Screenshots = new Dictionary<string, byte[]>();
+            Screenshots.Add("_Full", webDriver.GetEntireScreenshot(singleCaptureWebElements).ToByteArray(ImageFormat.Png));
+
+            var result = new WebpageResult
+            {
+                dateTime = DateTime.Now,
+                HTML = webDriver.PageSource,
+                URL = webDriver.Url,
+                Screenshots = Screenshots
+            };
+
+            var i = 1;
             foreach (var focusedWebElement in focusedWebElements)
             {
-                using (var ms = new MemoryStream(Full_Screenshot))
+                using (var ms = new MemoryStream(Screenshots["_Full"]))
                 {
                     using (var bitmap = new Bitmap(Image.FromStream(ms)))
                     {
@@ -67,80 +78,119 @@ namespace Witanra.AccountLogger.Extentions
                             height
                             );
                         var screenshot_focused = bitmap.Clone(rectangle, bitmap.PixelFormat);
-                        Focused_Screenshots.Add(screenshot_focused.ToByteArray(ImageFormat.Png));
+                        result.Screenshots.Add($"Focused_{i}", screenshot_focused.ToByteArray(ImageFormat.Png));
                     }
                 }
+                i++;
             }
-            var result = new WebPageResult
-            {
-                dateTime = DateTime.Now,
-                HTML = webDriver.PageSource,
-                URL = webDriver.Url,
-                Full_Screenshot = Full_Screenshot,
-                Focus_Screenshots = Focused_Screenshots
-            };
+
             return result;
-
-            ////if (focusedWebElement != null)
-            ////{
-            ////    ((IJavaScriptExecutor)webDriver).ExecuteScript("arguments[0].scrollIntoView(true);", focusedWebElement);
-            ////    Thread.Sleep(500);
-            ////}
-
-            //var screenshot_Full_AsByteArray = (webDriver as ITakesScreenshot).GetScreenshot().AsByteArray;
-            //byte[] screenshot_Focused_AsByteArray = null;
-            //if (focusedWebElement != null)
-            //{
-            //    using (var ms = new MemoryStream(screenshot_Full_AsByteArray))
-            //    {
-            //        using (var bitmap = new Bitmap(Image.FromStream(ms)))
-            //        {
-            //            var width = focusedWebElement.Size.Width;
-            //            if (bitmap.Width < focusedWebElement.Location.X + focusedWebElement.Size.Width)
-            //            {
-            //                width = bitmap.Width - focusedWebElement.Location.X;
-            //            }
-            //            var height = focusedWebElement.Size.Height;
-            //            if (bitmap.Height < focusedWebElement.Location.Y + focusedWebElement.Size.Height)
-            //            {
-            //                height = bitmap.Height - focusedWebElement.Location.Y;
-            //            }
-            //            var rectangle = new Rectangle(
-            //                Math.Min(focusedWebElement.Location.X, 0),
-            //                Math.Min(focusedWebElement.Location.Y, 0),
-            //                width,
-            //                height
-            //                );
-            //            var screenshot_focused = bitmap.Clone(rectangle, bitmap.PixelFormat);
-            //            screenshot_Focused_AsByteArray = screenshot_focused.ToByteArray(ImageFormat.Png);
-            //        }
-            //    }
-            //}
-
-            //var result = new WebPageResult
-            //{
-            //    dateTime = DateTime.Now,
-            //    HTML = webDriver.PageSource,
-            //    URL = webDriver.Url,
-            //    Screenshot_Full = screenshot_Full_AsByteArray,
-            //    Screenshot_Focused = screenshot_Focused_AsByteArray
-            //};
-            //return result;
         }
+
+        public static byte[] GetScreenshotFocused(this IWebDriver _driver, byte[] Full_Screenshot, string Focus_XPath)
+        {
+            byte[] result;
+
+            var FocusedElement = _driver.FindElement(By.XPath(Focus_XPath));
+            var Focus_X = FocusedElement.Location.X;
+            var Focus_Y = FocusedElement.Location.Y;
+            var Focus_Width = FocusedElement.Size.Width;
+            var Focus_Height = FocusedElement.Size.Height;
+
+            using (var ms = new MemoryStream(Full_Screenshot))
+            {
+                using (var bitmap = new Bitmap(Image.FromStream(ms)))
+                {
+                    if (bitmap.Width < Focus_X + Focus_Width)
+                    {
+                        Focus_Width = bitmap.Width - Focus_X;
+                    }
+
+                    if (bitmap.Height < Focus_Y + Focus_Height)
+                    {
+                        Focus_Height = bitmap.Height - Focus_Y;
+                    }
+                    var rectangle = new Rectangle(
+                        Focus_X,
+                        Focus_Y,
+                        Focus_Width,
+                        Focus_Height
+                        );
+                    var screenshot_focused = bitmap.Clone(rectangle, bitmap.PixelFormat);
+                    result = screenshot_focused.ToByteArray(ImageFormat.Png);
+                }
+            }
+            return result;
+        }
+
+        //public static byte[] GetScreenshotFocused(this IWebDriver _driver, byte[] Full_Screenshot, string iFrame_XPath, string Focus_XPath)
+        //{
+        //    //This doesn't work, the iframe x,y isn;t correct?
+        //    byte[] result;
+
+        //    _driver.SwitchTo().ParentFrame();
+        //    ((IJavaScriptExecutor)_driver).ExecuteScript("window.scrollTo(0, 0)");
+        //    Thread.Sleep(200);
+
+        //    var Frame_X = 0;
+        //    var Frame_Y = 0;
+        //    if (!String.IsNullOrEmpty(iFrame_XPath))
+        //    {
+        //        var FrameElement = _driver.FindElement(By.XPath(iFrame_XPath));
+        //        Frame_X = FrameElement.Location.X;
+        //        Frame_Y = FrameElement.Location.Y;
+        //        _driver.SwitchTo().Frame(FrameElement);
+        //    }
+
+        //    var FocusedElement = _driver.FindElement(By.XPath(Focus_XPath));
+        //    var Focus_X = FocusedElement.Location.X;
+        //    var Focus_Y = FocusedElement.Location.Y;
+        //    var Focus_Width = FocusedElement.Size.Width;
+        //    var Focus_Height = FocusedElement.Size.Height;
+
+        //    using (var ms = new MemoryStream(Full_Screenshot))
+        //    {
+        //        using (var bitmap = new Bitmap(Image.FromStream(ms)))
+        //        {
+        //            if (bitmap.Width < Frame_X + Focus_X + Focus_Width)
+        //            {
+        //                Focus_Width = bitmap.Width - Frame_X + Focus_X;
+        //            }
+
+        //            if (bitmap.Height < Frame_Y + Focus_Y + Focus_Height)
+        //            {
+        //                Focus_Height = bitmap.Height - Frame_Y + Focus_Y;
+        //            }
+        //            var rectangle = new Rectangle(
+        //                Focus_X + Frame_X,
+        //                Frame_Y + Focus_Y,
+        //                Focus_Width,
+        //                Focus_Height
+        //                );
+        //            var screenshot_focused = bitmap.Clone(rectangle, bitmap.PixelFormat);
+        //            result = screenshot_focused.ToByteArray(ImageFormat.Png);
+        //        }
+        //    }
+        //    return result;
+        //}
 
         public static void ScrollIntoView(this IWebDriver webDriver, IWebElement focusedWebElement)
         {
             ((IJavaScriptExecutor)webDriver).ExecuteScript("arguments[0].scrollIntoView(true);", focusedWebElement);
-            Thread.Sleep(1000);
+            Thread.Sleep(200);
         }
 
-        public static Bitmap GetEntireScreenshot(this IWebDriver _driver, List<IWebElement> singleCaptureWebElements)
+        public static Bitmap GetEntireScreenshot(this IWebDriver _driver, List<IWebElement> singleCaptureWebElements = null)
         {
+            _driver.SwitchTo().ParentFrame();
+
             ((IJavaScriptExecutor)_driver).ExecuteScript("return window.stop");
             ((IJavaScriptExecutor)_driver).ExecuteScript("window.stop();");
 
+            ((IJavaScriptExecutor)_driver).ExecuteScript("window.scrollTo(0, 0)");
+            Thread.Sleep(200);
+
             Bitmap stitchedImage = null;
-            //var capturedfixedPositionWebElements = new List<IWebElement>();
             try
             {
                 long totalwidth1 = (long)((IJavaScriptExecutor)_driver).ExecuteScript("return document.body.offsetWidth");//documentElement.scrollWidth");
@@ -193,15 +243,6 @@ namespace Witanra.AccountLogger.Extentions
                     // Calculate the Scrolling (if needed)
                     if (previous != Rectangle.Empty)
                     {
-                        //hide the fixed Position WebElements
-                        //foreach (var fixedPositionWebElement in singleCaptureWebElements)
-                        //{
-                        //    if (fixedPositionWebElement.Displayed)
-                        //    {
-                        //    }
-                        //    ((IJavaScriptExecutor)_driver).ExecuteScript("arguments[0].style.visibility='hidden'", fixedPositionWebElement);
-                        //}
-
                         int xDiff = rectangle.Right - previous.Right;
                         int yDiff = rectangle.Bottom - previous.Bottom;
 
@@ -247,6 +288,10 @@ namespace Witanra.AccountLogger.Extentions
             {
                 // handle
             }
+
+            //reset scroll position
+            ((IJavaScriptExecutor)_driver).ExecuteScript("window.scrollTo(0, 0)");
+            Thread.Sleep(200);
 
             return stitchedImage;
         }

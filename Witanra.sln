@@ -19,7 +19,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Witanra.ImageDownloader", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Witanra.ProcessManager", "Witanra.ProcessManager\Witanra.ProcessManager.csproj", "{962BF07F-EC1C-4BFD-B898-567DCC2DEC5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Witanra.AccountLogger", "Witanra.AccountLogger\Witanra.AccountLogger.csproj", "{BA8A9ECA-0527-469F-961F-197154D40720}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witanra.AccountLogger", "Witanra.AccountLogger\Witanra.AccountLogger.csproj", "{BA8A9ECA-0527-469F-961F-197154D40720}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Witanra.WebScraper", "Witanra.WebScraper\Witanra.WebScraper.csproj", "{6634A8B2-08AB-43D2-9EFC-FAB717CEE84D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{BA8A9ECA-0527-469F-961F-197154D40720}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA8A9ECA-0527-469F-961F-197154D40720}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA8A9ECA-0527-469F-961F-197154D40720}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6634A8B2-08AB-43D2-9EFC-FAB717CEE84D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6634A8B2-08AB-43D2-9EFC-FAB717CEE84D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6634A8B2-08AB-43D2-9EFC-FAB717CEE84D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6634A8B2-08AB-43D2-9EFC-FAB717CEE84D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

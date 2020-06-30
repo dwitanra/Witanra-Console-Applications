@@ -6,11 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Selenium.Firefox.WebDriver" Version="0.26.0" />
-    <PackageReference Include="Selenium.PhantomJS.WebDriver" Version="2.1.1" />
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="83.0.4103.3900" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Witanra.Shared\Witanra.Shared.csproj" />
+    <ProjectReference Include="..\Witanra.WebScraper\Witanra.WebScraper.csproj" />
+  </ItemGroup>
 </Project>
