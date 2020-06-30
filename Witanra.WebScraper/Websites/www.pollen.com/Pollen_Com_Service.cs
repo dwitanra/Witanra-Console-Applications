@@ -26,10 +26,10 @@ namespace Witanra.WebScraper.Websites.www.pollen.com
             Get_Allergy_Forcast_Date(result.pollenComDateResults, "today", 0);
             Get_Allergy_Forcast_Date(result.pollenComDateResults, "tomorrow", 1);
 
-            _webDriver.GoToUrl($"https://www.www.pollen.com/forecast/historic/pollen/{zipcode}");
+            _webDriver.GoToUrl($"https://www.pollen.com/forecast/historic/pollen/{zipcode}");
             result.webPageResults.Add(_webDriver.GetWebPageResult(_webDriver.FindElement(By.Id("highcharts-0"))));
 
-            _webDriver.GoToUrl($"https://www.www.pollen.com/forecast/extended/pollen/{zipcode}");
+            _webDriver.GoToUrl($"https://www.pollen.com/forecast/extended/pollen/{zipcode}");
             result.webPageResults.Add(_webDriver.GetWebPageResult(_webDriver.FindElement(By.Id("highcharts-0"))));
             var extendedPlot = _webDriver.FindElement(By.XPath("//*[@class='highcharts-data-labels highcharts-series-0 highcharts-tracker']"));
             var extendedDays = extendedPlot.FindElements(By.TagName("tspan"));

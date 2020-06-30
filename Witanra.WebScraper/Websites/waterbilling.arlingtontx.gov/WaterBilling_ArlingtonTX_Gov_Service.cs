@@ -96,7 +96,7 @@ namespace Witanra.WebScraper.Websites.waterbilling.arlingtontx.gov
 
             var focusedScreenshot = _webDriver.GetScreenshotFocused(WebPageResult.Screenshots["_Full"], Focus_XPath);
 
-            WebPageResult.Screenshots.Add("Focused", focusedScreenshot);
+            WebPageResult.Screenshots.Add("Focused_1", focusedScreenshot);
 
             result.WebpageResults.Add(WebPageResult);
         }

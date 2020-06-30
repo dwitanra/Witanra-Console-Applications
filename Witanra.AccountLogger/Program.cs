@@ -27,12 +27,12 @@ namespace Witanra.AccountLogger
             options.AddArgument("window-size=1920,5080");
             var driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), options);
 
-            //var pollenService = new Pollen_Com_Service(driver);
-            //var pollenResult = pollenService.GetForecast("76012");
-            //foreach (var webpage in pollenResult.webPageResults)
-            //{
-            //    webpage.SaveToFolder("C:\\temp\\");
-            //}
+            var pollenService = new Pollen_Com_Service(driver);
+            var pollenResult = pollenService.GetForecast("76012");
+            foreach (var webpage in pollenResult.webPageResults)
+            {
+                webpage.SaveToFolder("C:\\temp\\");
+            }
 
             var weatherService = new DateAndTime_Com_Service(driver);
             var weatherResult = weatherService.GetWeatherForecast("@z-us-76012");
@@ -41,7 +41,7 @@ namespace Witanra.AccountLogger
                 webpage.SaveToFolder("C:\\temp\\");
             }
 
-            var waterService = new WaterBilling_ArlingtonTX_Gov_Service(driver, "den85nis", "arWit411!");
+            var waterService = new WaterBilling_ArlingtonTX_Gov_Service(driver, "username", "password");
             var waterResult = waterService.GetResult();
             foreach (var webpage in waterResult.WebpageResults)
             {
