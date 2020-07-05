@@ -33,7 +33,6 @@ namespace Witanra.WebScraper.Websites.waterbilling.arlingtontx.gov
                 var passwordElement = _webDriver.FindElement(By.Id("password"));
                 passwordElement.Clear();
                 passwordElement.SendKeys(_password);
-                var builder = new Actions(_webDriver);
 
                 var LoginElement = _webDriver.FindElement(By.XPath("//button[@type='submit']"));
                 LoginElement.Click();
