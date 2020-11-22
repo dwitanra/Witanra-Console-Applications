@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,15 +8,17 @@ using System.Threading.Tasks;
 using Witanra.Shared;
 using Witanra.YouTubeDownloader.Models;
 using YoutubeExplode;
-using YoutubeExplode.Models;
-using YoutubeExplode.Models.MediaStreams;
+using YoutubeExplode.Channels;
+using YoutubeExplode.Playlists;
+using YoutubeExplode.Videos;
+using YoutubeExplode.Videos.Streams;
 
 namespace Witanra.YouTubeDownloader
 {
     internal class Program
     {
         private static ConsoleWriter _cw;
-        private static YoutubeClient _youtubeClient;
+        private static YoutubeClient _youtube;
 
         private static void Main(string[] args)
         {
@@ -23,10 +26,10 @@ namespace Witanra.YouTubeDownloader
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
 
             _cw = new ConsoleWriter();
-            _youtubeClient = new YoutubeClient();
+            _youtube = new YoutubeClient();
             Console.SetOut(_cw);
 
-            var settings = JsonHelper.DeserializeFile<Settings>("settings.json");
+            var settings = JsonConvert.DeserializeObject<Settings>(String.Join("", File.ReadAllLines("settings.json")));
             _cw.LogDirectory = settings.LogDirectory;
 
             Console.WriteLine($"Found { settings.Downloads.Count} Download Items in Settings");
@@ -43,9 +46,9 @@ namespace Witanra.YouTubeDownloader
                     {
                         try
                         {
-                            Console.WriteLine($"Getting {query.Type.ToString()} {query.Value}...");
+                            Console.WriteLine($"Getting {query.Type} {query.Value}...");
                             var executedQuery = ExecuteQueryAsync(query).GetAwaiter().GetResult();
-                            Console.WriteLine($"Got {executedQuery.Query.Type.ToString()} {executedQuery.Title}");
+                            Console.WriteLine($"Got {executedQuery.Query.Type} {executedQuery.Title}");
                             Save_Videos(executedQuery, settings, download);
                         }
                         catch (Exception ex)
@@ -98,17 +101,17 @@ namespace Witanra.YouTubeDownloader
                 videoId);
             Directory.CreateDirectory(cacheDir);
 
-            var streamInfoSet = _youtubeClient.GetVideoMediaStreamInfosAsync(videoId).GetAwaiter().GetResult();
+            var streamManifest = _youtube.Videos.Streams.GetManifestAsync(videoId).GetAwaiter().GetResult();
 
-            AudioStreamInfo audioStreamInfo;
-            VideoStreamInfo videoStreamInfo;
+            AudioOnlyStreamInfo audioStreamInfo;
+            VideoOnlyStreamInfo videoStreamInfo;
 
-            SelectMediaStreamInfoSet(streamInfoSet, settings, settingDownload, out audioStreamInfo, out videoStreamInfo);
+            SelectMediaStreamInfoSet(streamManifest, settings, settingDownload, out audioStreamInfo, out videoStreamInfo);
 
             var audiofilename = Path.Combine(
                 settings.CacheDirectory,
                 videoId,
-                $"{audioStreamInfo.AudioEncoding.ToString()}_({audioStreamInfo.Bitrate.ToString()}).{audioStreamInfo.Container.GetFileExtension()}"
+                $"{audioStreamInfo.AudioCodec}_({audioStreamInfo.Bitrate}).{audioStreamInfo.Container.Name}"
                 );
 
             if (
@@ -125,7 +128,7 @@ namespace Witanra.YouTubeDownloader
             var videoFilename = Path.Combine(
                 settings.CacheDirectory,
                 videoId,
-                $"{videoStreamInfo.VideoQuality}_{videoStreamInfo.Resolution.Width}x{videoStreamInfo.Resolution.Height}@{videoStreamInfo.Framerate}_{videoStreamInfo.VideoEncoding}_({videoStreamInfo.Bitrate}).{videoStreamInfo.Container.GetFileExtension()}"
+                $"{videoStreamInfo.VideoQuality}_{videoStreamInfo.Resolution.Width}x{videoStreamInfo.Resolution.Height}@{videoStreamInfo.Framerate}_{videoStreamInfo.VideoCodec}_({videoStreamInfo.Bitrate}).{videoStreamInfo.Container.Name}"
                 );
 
             if (
@@ -152,14 +155,14 @@ namespace Witanra.YouTubeDownloader
                     args.Add($"-i \"{audiofilename}\"");
 
                     // Set output format
-                    args.Add($"-f {videoStreamInfo.Container.GetFileExtension()}");
+                    args.Add($"-f {videoStreamInfo.Container.Name}");
 
                     // Skip transcoding if it's not required
                     if (!transcode)
                         args.Add("-c copy");
 
                     // Optimize mp4 transcoding
-                    if (transcode && string.Equals(videoStreamInfo.Container.GetFileExtension(), "mp4", StringComparison.OrdinalIgnoreCase))
+                    if (transcode && string.Equals(videoStreamInfo.Container.Name, "mp4", StringComparison.OrdinalIgnoreCase))
                         args.Add("-preset ultrafast");
 
                     // Set max threads
@@ -199,17 +202,19 @@ namespace Witanra.YouTubeDownloader
             }
         }
 
-        private static void SelectMediaStreamInfoSet(MediaStreamInfoSet streamInfoSet, Settings settings, SettingDownload settingDownload, out AudioStreamInfo audioStreamInfo, out VideoStreamInfo videoStreamInfo)
+        private static void SelectMediaStreamInfoSet(StreamManifest streamManifest, Settings settings, SettingDownload settingDownload, out AudioOnlyStreamInfo audioStreamInfo, out VideoOnlyStreamInfo videoStreamInfo)
         {
             //Todo make a better selection process
             //by largest container bitrate
 
-            audioStreamInfo = streamInfoSet.Audio
+            audioStreamInfo = streamManifest
+                        .GetAudioOnly()
                 .Where(s => s.Container == Container.Mp4)
                 .OrderByDescending(s => s.Bitrate)
                 .First();
 
-            videoStreamInfo = streamInfoSet.Video
+            videoStreamInfo = streamManifest
+                    .GetVideoOnly()
                .Where(s => s.Container == Container.Mp4)
                .OrderByDescending(s => s.VideoQuality)
                .ThenByDescending(s => s.Framerate)
@@ -217,28 +222,31 @@ namespace Witanra.YouTubeDownloader
 
             if (settingDownload.MediaType == MediaType.Audio)
             {
-                audioStreamInfo = streamInfoSet.Audio
+                audioStreamInfo = streamManifest
+                        .GetAudioOnly()
                 .OrderByDescending(s => s.Bitrate)
                 .First();
             }
 
             if (settingDownload.MediaType == MediaType.Video)
             {
-                videoStreamInfo = streamInfoSet.Video
-               .OrderByDescending(s => s.VideoQuality)
-               .ThenByDescending(s => s.Framerate)
-               .First();
+                videoStreamInfo = streamManifest
+                     .GetVideoOnly()
+                .Where(s => s.Container == Container.Mp4)
+                .OrderByDescending(s => s.VideoQuality)
+                .ThenByDescending(s => s.Framerate)
+                .First();
             }
         }
 
-        private static void DownloadMediaStream(MediaStreamInfo audioStreamInfo, string filename, Settings settings)
+        private static void DownloadMediaStream(IStreamInfo streamInfo, string filename, Settings settings)
         {
             var tempFileName = Path.Combine(settings.TempDirectory, Guid.NewGuid().ToString());
             Directory.CreateDirectory(Path.GetDirectoryName(tempFileName));
             Directory.CreateDirectory(Path.GetDirectoryName(filename));
 
             Console.WriteLine($"Downloading Media to {filename}...");
-            _youtubeClient.DownloadMediaStreamAsync(audioStreamInfo, tempFileName).GetAwaiter().GetResult();
+            _youtube.Videos.Streams.DownloadAsync(streamInfo, tempFileName).GetAwaiter().GetResult();
             File.Move(tempFileName, filename);
         }
 
@@ -246,46 +254,28 @@ namespace Witanra.YouTubeDownloader
         {
             query = query.Trim();
 
-            // Playlist ID
-            if (YoutubeClient.ValidatePlaylistId(query))
+            var playlistId = TryParsePlaylistId(query);
+            if (playlistId != null)
             {
-                return new Query(QueryType.Playlist, query);
+                return new Query(QueryType.Playlist, playlistId.Value);
             }
 
-            // Playlist URL
-            if (YoutubeClient.TryParsePlaylistId(query, out var playlistId))
+            var videoId = TryParseVideoId(query);
+            if (videoId != null)
             {
-                return new Query(QueryType.Playlist, playlistId);
+                return new Query(QueryType.Video, videoId.Value);
             }
 
-            // Video ID
-            if (YoutubeClient.ValidateVideoId(query))
-            {
-                return new Query(QueryType.Video, query);
-            }
-
-            // Video URL
-            if (YoutubeClient.TryParseVideoId(query, out var videoId))
-            {
-                return new Query(QueryType.Video, videoId);
-            }
-
-            // Channel ID
-            if (YoutubeClient.ValidateChannelId(query))
-            {
-                return new Query(QueryType.Channel, query);
-            }
-
-            // Channel URL
-            if (YoutubeClient.TryParseChannelId(query, out var channelId))
+            var channelId = TryParseChannelId(query);
+            if (channelId != null)
             {
                 return new Query(QueryType.Channel, channelId);
             }
 
-            // User URL
-            if (YoutubeClient.TryParseUsername(query, out var username))
+            var userName = TryParseUserName(query);
+            if (userName != null)
             {
-                return new Query(QueryType.User, username);
+                return new Query(QueryType.User, userName.Value);
             }
 
             // Search
@@ -299,36 +289,34 @@ namespace Witanra.YouTubeDownloader
             // Video
             if (query.Type == QueryType.Video)
             {
-                var video = await _youtubeClient.GetVideoAsync(query.Value);
-                var title = video.Title;
+                var video = await _youtube.Videos.GetAsync(query.Value);
 
-                return new ExecutedQuery(query, title, new[] { video });
+                return new ExecutedQuery(query, video.Title, new[] { video });
             }
 
             // Playlist
             if (query.Type == QueryType.Playlist)
             {
-                var playlist = await _youtubeClient.GetPlaylistAsync(query.Value);
-                var title = playlist.Title;
+                var playlist = await _youtube.Playlists.GetAsync(query.Value);
+                var videos = await _youtube.Playlists.GetVideosAsync(query.Value).BufferAsync();
 
-                return new ExecutedQuery(query, title, playlist.Videos);
+                return new ExecutedQuery(query, playlist.Title, videos);
             }
 
             // Channel
             if (query.Type == QueryType.Channel)
             {
-                var channel = await _youtubeClient.GetChannelAsync(query.Value);
-                var videos = await _youtubeClient.GetChannelUploadsAsync(query.Value);
-                var title = channel.Title;
+                var channel = await _youtube.Channels.GetAsync(query.Value);
+                var videos = await _youtube.Channels.GetUploadsAsync(query.Value).BufferAsync();
 
-                return new ExecutedQuery(query, title, videos);
+                return new ExecutedQuery(query, $"Channel uploads: {channel.Title}", videos);
             }
 
             // User
             if (query.Type == QueryType.User)
             {
-                var channelId = await _youtubeClient.GetChannelIdAsync(query.Value);
-                var videos = await _youtubeClient.GetChannelUploadsAsync(channelId);
+                var channel = await _youtube.Channels.GetByUserAsync(query.Value);
+                var videos = await _youtube.Channels.GetUploadsAsync(channel.Id).BufferAsync();
                 var title = query.Value;
 
                 return new ExecutedQuery(query, title, videos);
@@ -337,13 +325,65 @@ namespace Witanra.YouTubeDownloader
             // Search
             if (query.Type == QueryType.Search)
             {
-                var videos = await _youtubeClient.SearchVideosAsync(query.Value, 2);
-                var title = query.Value;
-
-                return new ExecutedQuery(query, title, videos);
+                var videos = await _youtube.Search.GetVideosAsync(query.Value).BufferAsync(200);
+                return new ExecutedQuery(query, $"Search: {query.Value}", videos);
             }
 
-            throw new ArgumentException($"Could not parse query [{query}].", nameof(query));
+            throw new ArgumentException($"Could not parse query '{query}'.", nameof(query));
+        }
+
+        private static VideoId? TryParseVideoId(string query)
+        {
+            query = query.Trim();
+            try
+            {
+                return new VideoId(query);
+            }
+            catch (ArgumentException)
+            {
+                return null;
+            }
+        }
+
+        private static PlaylistId? TryParsePlaylistId(string query)
+        {
+            try
+            {
+                return new PlaylistId(query);
+            }
+            catch (ArgumentException)
+            {
+                return null;
+            }
+        }
+
+        private static ChannelId? TryParseChannelId(string query)
+        {
+            try
+            {
+                return new ChannelId(query);
+            }
+            catch (ArgumentException)
+            {
+                return null;
+            }
+        }
+
+        private static UserName? TryParseUserName(string query)
+        {
+            try
+            {
+                // Only URLs
+                if (!query.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                    !query.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                    return null;
+
+                return new UserName(query);
+            }
+            catch (ArgumentException)
+            {
+                return null;
+            }
         }
 
         private static void CloseWait()

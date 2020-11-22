@@ -71,7 +71,7 @@ namespace Witanra.Shared
             }
         }
 
-        public ConsoleWriter(bool DoIntroduction = true, bool AlwaysWriteLog = true)
+        public ConsoleWriter(bool DoIntroduction = true, bool AlwaysWriteLog = false)
         {
             //set defaults
             LogDirectory = AppDomain.CurrentDomain.BaseDirectory;
