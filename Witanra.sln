@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witanra.AccountLogger", "Wi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witanra.WebScraper", "Witanra.WebScraper\Witanra.WebScraper.csproj", "{6634A8B2-08AB-43D2-9EFC-FAB717CEE84D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Witanra.DeepStack", "Witanra.DeepStack\Witanra.DeepStack.csproj", "{85140E6D-A6D5-4B09-9E63-8B2753484152}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witanra.DeepStack", "Witanra.DeepStack\Witanra.DeepStack.csproj", "{85140E6D-A6D5-4B09-9E63-8B2753484152}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

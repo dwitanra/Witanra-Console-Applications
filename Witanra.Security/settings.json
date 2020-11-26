@@ -1,7 +1,8 @@
 ﻿{
   "logDirectory": "P:\\Witanra_Security\\logs",
   "tempDirectory": "P:\\temp\\Witanra_Security",
-  "destinationDirectory": "P:\\Witanra_Security\\data",
+  "destinationEventDirectory": "P:\\Witanra_Security\\event",
+  "destinationSummaryDirectory": "P:\\Witanra_Security\\daily_summary",
   "dateFormats": [
     "yyyy-MM-dd",
     "yyyyMMdd"

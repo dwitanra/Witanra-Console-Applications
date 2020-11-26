@@ -28,9 +28,9 @@ namespace Witanra.Security
             {
                 try
                 {
-                    FileHelper.MoveFileByNameAndDate(directory.Name, settings.DateFormats, directory.Directory, settings.DestinationDirectory, 30, false);
+                    FileHelper.MoveFileByNameAndDate(directory.Name, settings.DateFormats, directory.Directory, settings.DestinationEventDirectory, 30, false);
 
-                    var Dirs = Directory.GetDirectories(Path.Combine(settings.DestinationDirectory, directory.Name));
+                    var Dirs = Directory.GetDirectories(Path.Combine(settings.DestinationEventDirectory, directory.Name));
                     foreach (var dir in Dirs)
                     {
                         var IsToday = false;
@@ -49,7 +49,7 @@ namespace Witanra.Security
                         }
 
                         var dirName = new DirectoryInfo(dir).Name;
-                        var filename = Path.Combine(settings.DestinationDirectory, directory.Name + "_" + dirName + ".mp4");
+                        var filename = Path.Combine(settings.DestinationSummaryDirectory, directory.Name + "_" + dirName + ".mp4");
                         VideoHelper.MakeVideoFromImages(dir, filename, settings.TempDirectory, true);
                     }
                     FileHelper.DeleteDirIfEmpty(directory.Directory);
@@ -59,8 +59,6 @@ namespace Witanra.Security
                     Console.WriteLine($"Directory was not processes successfully. Exception: {ex.Message}");
                 }
             }
-
-            FileHelper.DeleteDirIfEmpty(settings.DestinationDirectory);
 
             CloseWait();
         }

@@ -80,6 +80,9 @@ namespace Witanra.ImageDownloader
             StringVariable = StringVariable.Replace("{year}", now.ToString("yyyy"));
             StringVariable = StringVariable.Replace("{month}", now.ToString("MM"));
             StringVariable = StringVariable.Replace("{day}", now.ToString("dd"));
+            StringVariable = StringVariable.Replace("{hour}", now.ToString("HH"));
+            StringVariable = StringVariable.Replace("{minute}", now.ToString("mm"));
+            StringVariable = StringVariable.Replace("{second}", now.ToString("ss"));
             StringVariable = StringVariable.Replace("{date}", now.ToString("yyyyMMdd-HHmmssffff"));
 
             return StringVariable;
