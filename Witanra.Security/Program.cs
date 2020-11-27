@@ -28,8 +28,6 @@ namespace Witanra.Security
             {
                 try
                 {
-                    FileHelper.MoveFileByNameAndDate(directory.Name, settings.DateFormats, directory.Directory, settings.DestinationEventDirectory, 30, false);
-
                     var Dirs = Directory.GetDirectories(Path.Combine(settings.DestinationEventDirectory, directory.Name));
                     foreach (var dir in Dirs)
                     {

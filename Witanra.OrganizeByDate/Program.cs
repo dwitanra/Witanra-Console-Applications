@@ -24,7 +24,14 @@ namespace Witanra.OrganizeByDate
 
             foreach (var directorypair in settings.DirectoryPairs)
             {
-                MoveFileByCreatedDate(settings.DateFormat, directorypair.SourceDirectory, directorypair.DestinationDirectory, true);
+                try
+                {
+                    MoveFileByCreatedDate(settings.DateFormat, directorypair.SourceDirectory, directorypair.DestinationDirectory, true);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Unable to Move File By Created Date {ex.Message}");
+                }
             }
 
             CloseWait();
@@ -32,6 +39,10 @@ namespace Witanra.OrganizeByDate
 
         public static void MoveFileByCreatedDate(string DateFormat, string SourceDirectory, string DestinationDirectory, bool DisplayMove)
         {
+            if (!Directory.Exists(SourceDirectory))
+            {
+                Console.WriteLine($"Directory doesn't exist: {SourceDirectory}...");
+            }
             Console.WriteLine($"Getting Files from {SourceDirectory}...");
             string[] files = Directory.GetFiles(SourceDirectory, "*.*", SearchOption.AllDirectories);
             Console.WriteLine($"{files.Length + 1} file{((files.Length + 1 != 1) ? "s" : "")} found");

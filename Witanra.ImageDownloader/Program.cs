@@ -18,7 +18,13 @@ namespace Witanra.ImageDownloader
             _cw = new ConsoleWriter();
             Console.SetOut(_cw);
 
-            var settings = JsonHelper.DeserializeFile<Settings>("settings.json");
+            var settingsFile = "settings.json";
+            if (args != null && args.Length > 0)
+            {
+                settingsFile = args[0];
+            }
+
+            var settings = JsonHelper.DeserializeFile<Settings>(settingsFile);
             _cw.LogDirectory = settings.LogDirectory;
 
             Console.WriteLine($"Found { settings.ImageDownloadActions.Count} Image Download Actions in Settings");
