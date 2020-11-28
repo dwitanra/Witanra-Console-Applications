@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-
-//using System.Linq;
 using System.Threading;
 using Witanra.Shared;
 
@@ -19,44 +17,52 @@ namespace Witanra.Security
             _cw = new ConsoleWriter();
             Console.SetOut(_cw);
 
-            var settings = JsonHelper.DeserializeFile<Settings>("settings.json");
+            var settingsFile = "settings.json";
+            if (args != null && args.Length > 0)
+            {
+                settingsFile = args[0];
+            }
+
+            var settings = JsonHelper.DeserializeFile<Settings>(settingsFile);
             _cw.LogDirectory = settings.LogDirectory;
 
-            Console.WriteLine($"Found { settings.Directories.Count} Directory in Settings");
+            var Camera_Dirs = Directory.GetDirectories(settings.SourceDataDirectory);
 
-            foreach (var directory in settings.Directories)
+            Console.WriteLine($"Found { Camera_Dirs.Length} Directory in {settings.SourceDataDirectory}");
+
+            foreach (var Camera_Dir in Camera_Dirs)
             {
-                try
+                var Day_Dirs = Directory.GetDirectories(Camera_Dir);
+                foreach (var day_dir in Day_Dirs)
                 {
-                    var Dirs = Directory.GetDirectories(Path.Combine(settings.DestinationEventDirectory, directory.Name));
-                    foreach (var dir in Dirs)
+                    try
                     {
-                        var IsToday = false;
+                        var IsTodayFormatMatch = false;
                         foreach (string DateFormat in settings.DateFormats)
                         {
-                            if (dir.Contains(DateTime.Today.ToString(DateFormat)))
+                            if (day_dir.Contains(DateTime.Today.ToString(DateFormat)))
                             {
-                                IsToday = true;
+                                IsTodayFormatMatch = true;
                                 break;
                             }
                         }
-                        if (IsToday)
+                        if (IsTodayFormatMatch && settings.ExcludeToday)
                         {
-                            Console.WriteLine($"Not Making video file for {dir} because it is today.");
-                            break;
+                            Console.WriteLine($"Not Making video file for {day_dir} because it contains Today.");
+                            continue;
                         }
 
-                        var dirName = new DirectoryInfo(dir).Name;
-                        var filename = Path.Combine(settings.DestinationSummaryDirectory, directory.Name + "_" + dirName + ".mp4");
-                        VideoHelper.MakeVideoFromImages(dir, filename, settings.TempDirectory, true);
+                        var filename = Path.Combine(settings.DestinationSummaryDirectory, new DirectoryInfo(Camera_Dir).Name + "_" + DateTime.Today.ToString(settings.DateFormats[0]) + ".mp4");
+                        VideoHelper.MakeVideoFromImages(day_dir, filename, settings.TempDirectory, settings.DeleteImages, settings.MinImagesToMakeVideo);
                     }
-                    FileHelper.DeleteDirIfEmpty(directory.Directory);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Directory was not processes successfully. Exception: {ex.Message}");
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Directory was not processes successfully. Exception: {ex.Message}");
+                    }
                 }
             }
+
+            FileHelper.DeleteDirIfEmpty(settings.SourceDataDirectory);
 
             CloseWait();
         }

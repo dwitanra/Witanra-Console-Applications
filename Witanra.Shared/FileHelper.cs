@@ -62,7 +62,7 @@ namespace Witanra.Shared
             {
                 if (Directory.Exists(directory))
                 {
-                    Console.WriteLine($"Deleting {directory} since it was empty.");
+                    Console.WriteLine($"Deleting {directory}.");
                     Directory.Delete(directory, true);
                 }
             }
@@ -94,15 +94,19 @@ namespace Witanra.Shared
             return newFileName;
         }
 
-        public static void DeleteDirIfEmpty(string startLocation)
+        public static void DeleteDirIfEmpty(string startLocation, bool LogAllDirectoryDelete = false)
         {
+            Console.WriteLine($"Deleting Empty Directories and Sub Directories in {startLocation}");
             foreach (var directory in Directory.GetDirectories(startLocation))
             {
-                DeleteDirIfEmpty(directory);
+                DeleteDirIfEmpty(directory, LogAllDirectoryDelete);
                 if (Directory.GetFiles(directory).Length == 0 &&
                     Directory.GetDirectories(directory).Length == 0)
                 {
-                    Console.WriteLine($"Deleting {directory} since it was empty.");
+                    if (LogAllDirectoryDelete)
+                    {
+                        Console.WriteLine($"Deleting {directory} since it was empty.");
+                    }
                     Directory.Delete(directory, false);
                 }
             }

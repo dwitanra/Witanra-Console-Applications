@@ -5,12 +5,12 @@ namespace Witanra.Shared
 {
     public class VideoHelper
     {
-        public static void MakeVideoFromImages(string SourceDirWithImages, string DestinationFile, string TempDir, bool DeleteSourceImages)
+        public static void MakeVideoFromImages(string SourceDirWithImages, string DestinationFile, string TempDir, bool DeleteSourceImages, int MinImagesToMakeVideo)
         {
             try
             {
                 string[] files = Directory.GetFiles(SourceDirWithImages, "*.jpg");
-                if (files.Length > 0)
+                if (files.Length > MinImagesToMakeVideo)
                 {
                     Console.WriteLine($"Processing {files.Length} jpgs files from {SourceDirWithImages}...");
                     TempDir = Path.Combine(TempDir, Path.GetFileNameWithoutExtension(DestinationFile));

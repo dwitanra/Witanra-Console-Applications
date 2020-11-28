@@ -1,0 +1,13 @@
+﻿{
+  "logDirectory": "P:\\Witanra_Security\\logs",
+  "tempDirectory": "P:\\temp\\Witanra_Security",
+  "sourceDataDirectory": "P:\\Witanra_Security\\daily_data",
+  "destinationSummaryDirectory": "P:\\Witanra_Security\\daily_summary",
+  "minImagesToMakeVideo": 10,
+  "excludeToday": true,
+  "deleteImages": true,
+  "dateFormats": [
+    "yyyy-MM-dd",
+    "yyyyMMdd"
+  ]
+}
