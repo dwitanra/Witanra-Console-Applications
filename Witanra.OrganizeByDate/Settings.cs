@@ -7,5 +7,6 @@ namespace Witanra.OrganizeByDate
         public string DateFormat { get; set; }
         public string LogDirectory { get; set; }
         public List<DirectoryPair> DirectoryPairs { get; set; }
+        public bool DisplayFileMove { get; set; }
     }
 }

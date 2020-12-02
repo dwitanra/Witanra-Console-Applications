@@ -26,7 +26,7 @@ namespace Witanra.OrganizeByDate
             {
                 try
                 {
-                    MoveFileByCreatedDate(settings.DateFormat, directorypair.SourceDirectory, directorypair.DestinationDirectory, true);
+                    MoveFileByCreatedDate(settings.DateFormat, directorypair.SourceDirectory, directorypair.DestinationDirectory, settings.DisplayFileMove);
                 }
                 catch (Exception ex)
                 {
@@ -58,7 +58,7 @@ namespace Witanra.OrganizeByDate
 
                     if (DisplayMove)
                     {
-                        Console.WriteLine($"Moving {file} to {newFileName}...");
+                        Console.WriteLine($"Moving {Path.GetFileName(file)} to {Path.GetFileName(newFileName)}...");
                     }
                     (new FileInfo(newFileName)).Directory.Create();
                     File.Move(file, newFileName);
