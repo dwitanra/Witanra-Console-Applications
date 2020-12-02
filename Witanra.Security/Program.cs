@@ -37,10 +37,11 @@ namespace Witanra.Security
                 {
                     try
                     {
+                        string dirName = new DirectoryInfo(day_dir).Name;
                         var IsTodayFormatMatch = false;
                         foreach (string DateFormat in settings.DateFormats)
                         {
-                            if (day_dir.Contains(DateTime.Today.ToString(DateFormat)))
+                            if (dirName.Contains(DateTime.Today.ToString(DateFormat)))
                             {
                                 IsTodayFormatMatch = true;
                                 break;
@@ -48,11 +49,11 @@ namespace Witanra.Security
                         }
                         if (IsTodayFormatMatch && settings.ExcludeToday)
                         {
-                            Console.WriteLine($"Not Making video file for {day_dir} because it contains Today.");
+                            Console.WriteLine($"Not Making video file for {dirName} because it contains Today.");
                             continue;
                         }
 
-                        var filename = Path.Combine(settings.DestinationSummaryDirectory, new DirectoryInfo(Camera_Dir).Name + "_" + DateTime.Today.ToString(settings.DateFormats[0]) + ".mp4");
+                        var filename = Path.Combine(settings.DestinationSummaryDirectory, new DirectoryInfo(Camera_Dir).Name + "_" + dirName + ".mp4");
                         VideoHelper.MakeVideoFromImages(day_dir, filename, settings.TempDirectory, settings.DeleteImages, settings.MinImagesToMakeVideo);
                     }
                     catch (Exception ex)
