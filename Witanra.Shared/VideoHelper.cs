@@ -1,15 +1,22 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace Witanra.Shared
 {
     public class VideoHelper
     {
-        public static void MakeVideoFromImages(string SourceDirWithImages, string DestinationFile, string TempDir, bool DeleteSourceImages, int MinImagesToMakeVideo)
+        public static void MakeVideoFromImages(string SourceDirWithImages, string DestinationFile, string TempDir, bool DeleteSourceImages, int MinImagesToMakeVideo, bool OrderByCreationDate = true)
         {
             try
             {
-                string[] files = Directory.GetFiles(SourceDirWithImages, "*.jpg");
+                var info = new DirectoryInfo(SourceDirWithImages);
+                var files = info.GetFiles("*.jpg", SearchOption.AllDirectories);
+                if (OrderByCreationDate)
+                {
+                    files = files.OrderBy(p => p.CreationTime).ToArray();
+                }
+
                 if (files.Length > MinImagesToMakeVideo)
                 {
                     Console.WriteLine($"Processing {files.Length} jpgs files from {SourceDirWithImages}...");
@@ -22,7 +29,7 @@ namespace Witanra.Shared
                     Array.Sort(files, StringComparer.InvariantCulture);
                     for (int i = 0; i < files.Length; i++)
                     {
-                        string oldFile = files[i];
+                        string oldFile = files[i].FullName;
                         string newFile = TempDir + "\\" + Convert.ToString(i).PadLeft(6, '0') + ".jpg";
                         //Console.WriteLine("Copying file from " + oldFile + " to " + newFile);
                         if (new FileInfo(oldFile).Length > 0)
