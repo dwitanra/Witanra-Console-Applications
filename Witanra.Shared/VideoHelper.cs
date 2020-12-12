@@ -10,26 +10,25 @@ namespace Witanra.Shared
         {
             try
             {
-                var info = new DirectoryInfo(SourceDirWithImages);
-                var files = info.GetFiles("*.jpg", SearchOption.AllDirectories);
+                var files = Directory.GetFiles(SourceDirWithImages, "*.jpg", SearchOption.AllDirectories);
+
                 if (OrderByCreationDate)
                 {
-                    files = files.OrderBy(p => p.CreationTime).ToArray();
+                    files = files.OrderBy(f => new FileInfo(f).CreationTime).ToArray();
                 }
 
-                if (files.Length > MinImagesToMakeVideo)
+                if (files.Count() > MinImagesToMakeVideo)
                 {
-                    Console.WriteLine($"Processing {files.Length} jpgs files from {SourceDirWithImages}...");
+                    Console.WriteLine($"Processing {files.Count()} jpgs files from {SourceDirWithImages}...");
                     TempDir = Path.Combine(TempDir, Path.GetFileNameWithoutExtension(DestinationFile));
                     DestinationFile = FileHelper.GetUniqueFilename(DestinationFile);
 
                     FileHelper.DeleteDirSafe(TempDir);
                     Directory.CreateDirectory(TempDir);
-
-                    Array.Sort(files, StringComparer.InvariantCulture);
-                    for (int i = 0; i < files.Length; i++)
+                    var i = 1;
+                    foreach (var file in files)
                     {
-                        string oldFile = files[i].FullName;
+                        string oldFile = file;
                         string newFile = TempDir + "\\" + Convert.ToString(i).PadLeft(6, '0') + ".jpg";
                         //Console.WriteLine("Copying file from " + oldFile + " to " + newFile);
                         if (new FileInfo(oldFile).Length > 0)
@@ -43,6 +42,7 @@ namespace Witanra.Shared
                                 File.Copy(oldFile, newFile);
                             }
                         }
+                        i++;
                     }
 
                     Console.WriteLine($"Saving Video to {DestinationFile}...");
