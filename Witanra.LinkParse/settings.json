@@ -1,0 +1,7 @@
+﻿{
+  "logDirectory": "_log",
+  "InputFile": "watch-history.html",
+  "RegExExpression": "(?<=<a href=\")https:\\/\\/www\\.youtube\\.com\\/watch\\?v=.+?(?=\">)",
+  "CountGreaterThan": 3,
+  "OutputFile": "output.txt"
+}
